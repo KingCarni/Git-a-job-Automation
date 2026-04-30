@@ -1,0 +1,27 @@
+{
+  "allowedLedgerReasons": [
+    "purchase_stripe",
+    "analyze_resume",
+    "rewrite_bullet",
+    "donate_credits",
+    "donation_in",
+    "refund_failed_analysis",
+    "signup_bonus",
+    "initial_state"
+  ],
+  "p0Rules": [
+    "Credits should not be consumed for failed parse before analysis.",
+    "Duplicate Stripe events should not award credits twice.",
+    "Duplicate analysis submissions should not double-charge.",
+    "Free credits should not be donatable if paid-only donation rule applies.",
+    "Displayed balance should match ledger-derived balance.",
+    "User credit actions must be scoped to the correct user."
+  ],
+  "recommendedApiAssertions": [
+    "status code is safe and expected",
+    "ledger entry count is correct",
+    "ledger ref/idempotency key is unique",
+    "balance is derived from ledger sum",
+    "no cross-user mutation occurs"
+  ]
+}

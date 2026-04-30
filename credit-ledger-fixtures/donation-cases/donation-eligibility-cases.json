@@ -1,0 +1,58 @@
+{
+  "suite": "donation-eligibility-cases",
+  "cases": [
+    {
+      "id": "DN-P0-001",
+      "risk": "cannot_donate_more_than_paid_eligible_credits",
+      "userId": "qa-user-a",
+      "startingLedger": [
+        { "delta": 2, "reason": "purchase_stripe", "ref": "purchase-001" }
+      ],
+      "donationAttempt": 5,
+      "expectedStatus": "rejected",
+      "expectedFinalBalance": 2,
+      "expectedVerdict": "pass"
+    },
+    {
+      "id": "DN-P0-002",
+      "risk": "free_credits_not_donatable",
+      "userId": "qa-user-a",
+      "startingLedger": [
+        { "delta": 5, "reason": "signup_bonus", "ref": "free-001" }
+      ],
+      "donationAttempt": 1,
+      "expectedStatus": "rejected",
+      "expectedEligiblePaidCredits": 0,
+      "expectedVerdict": "pass"
+    },
+    {
+      "id": "DN-P0-003",
+      "risk": "paid_credits_can_be_donated",
+      "userId": "qa-user-a",
+      "startingLedger": [
+        { "delta": 5, "reason": "purchase_stripe", "ref": "purchase-001" }
+      ],
+      "donationAttempt": 2,
+      "expectedStatus": "accepted",
+      "expectedLedgerEntry": {
+        "delta": -2,
+        "reason": "donate_credits"
+      },
+      "expectedFinalBalance": 3,
+      "expectedVerdict": "pass"
+    },
+    {
+      "id": "DN-P0-004",
+      "risk": "previously_donated_paid_credits_reduce_eligibility",
+      "userId": "qa-user-a",
+      "startingLedger": [
+        { "delta": 5, "reason": "purchase_stripe", "ref": "purchase-001" },
+        { "delta": -3, "reason": "donate_credits", "ref": "donation-001" }
+      ],
+      "donationAttempt": 3,
+      "expectedStatus": "rejected",
+      "expectedEligiblePaidCredits": 2,
+      "expectedVerdict": "pass"
+    }
+  ]
+}

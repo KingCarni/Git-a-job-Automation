@@ -1,0 +1,49 @@
+{
+  "suite": "stripe-webhook-idempotency-cases",
+  "cases": [
+    {
+      "id": "WH-P0-001",
+      "risk": "duplicate_stripe_event_awards_once",
+      "eventId": "evt_test_001",
+      "userId": "qa-user-a",
+      "creditsPurchased": 20,
+      "webhookDeliveries": [
+        { "eventId": "evt_test_001", "deliveryAttempt": 1 },
+        { "eventId": "evt_test_001", "deliveryAttempt": 2 }
+      ],
+      "expectedLedgerEntries": 1,
+      "expectedFinalBalance": 20,
+      "expectedVerdict": "pass"
+    },
+    {
+      "id": "WH-P0-002",
+      "risk": "missing_event_id_rejected",
+      "eventId": null,
+      "userId": "qa-user-a",
+      "creditsPurchased": 20,
+      "expectedStatus": "reject",
+      "expectedLedgerEntries": 0,
+      "expectedVerdict": "pass"
+    },
+    {
+      "id": "WH-P1-003",
+      "risk": "unknown_event_type_ignored_safely",
+      "eventId": "evt_unknown_001",
+      "eventType": "customer.subscription.deleted",
+      "expectedStatus": "ignored_or_noop",
+      "expectedLedgerEntries": 0,
+      "expectedVerdict": "pass"
+    },
+    {
+      "id": "WH-P0-004",
+      "risk": "same_checkout_session_not_credited_twice",
+      "eventIds": ["evt_test_002", "evt_test_003"],
+      "checkoutSessionId": "cs_test_same_session_001",
+      "userId": "qa-user-a",
+      "creditsPurchased": 10,
+      "expectedLedgerEntries": 1,
+      "expectedFinalBalance": 10,
+      "expectedVerdict": "pass"
+    }
+  ]
+}

@@ -1,0 +1,109 @@
+{
+  "suite": "credit-ledger-regression-cases",
+  "cases": [
+    {
+      "id": "CL-P0-001",
+      "risk": "successful_analysis_consumes_credit",
+      "startingLedger": [
+        { "userId": "qa-user-a", "delta": 5, "reason": "purchase_stripe", "ref": "purchase-001" }
+      ],
+      "action": {
+        "type": "analyze_resume",
+        "result": "success",
+        "ref": "analysis-001"
+      },
+      "expectedLedgerEntry": {
+        "userId": "qa-user-a",
+        "delta": -1,
+        "reason": "analyze_resume",
+        "ref": "analysis-001"
+      },
+      "expectedFinalBalance": 4,
+      "expectedVerdict": "pass"
+    },
+    {
+      "id": "CL-P0-002",
+      "risk": "failed_parse_does_not_consume_credit",
+      "startingLedger": [
+        { "userId": "qa-user-a", "delta": 5, "reason": "purchase_stripe", "ref": "purchase-001" }
+      ],
+      "action": {
+        "type": "analyze_resume",
+        "result": "parse_failure",
+        "ref": "analysis-failed-parse-001"
+      },
+      "expectedLedgerEntry": null,
+      "expectedFinalBalance": 5,
+      "expectedVerdict": "pass"
+    },
+    {
+      "id": "CL-P0-003",
+      "risk": "ai_provider_failure_does_not_consume_credit_unfairly",
+      "startingLedger": [
+        { "userId": "qa-user-a", "delta": 5, "reason": "purchase_stripe", "ref": "purchase-001" }
+      ],
+      "action": {
+        "type": "analyze_resume",
+        "result": "ai_provider_failure",
+        "ref": "analysis-failed-ai-001"
+      },
+      "expectedAllowedOutcomes": [
+        {
+          "mode": "no_charge",
+          "expectedFinalBalance": 5
+        },
+        {
+          "mode": "charge_then_refund",
+          "requiredLedgerReasons": ["analyze_resume", "refund_failed_analysis"],
+          "expectedFinalBalance": 5
+        }
+      ],
+      "expectedVerdict": "pass"
+    },
+    {
+      "id": "CL-P0-004",
+      "risk": "double_click_analyze_does_not_double_charge",
+      "startingLedger": [
+        { "userId": "qa-user-a", "delta": 5, "reason": "purchase_stripe", "ref": "purchase-001" }
+      ],
+      "action": {
+        "type": "analyze_resume",
+        "result": "duplicate_submit",
+        "refs": ["analysis-dup-001", "analysis-dup-001"]
+      },
+      "expectedLedgerEntriesMatchingRef": 1,
+      "expectedFinalBalance": 4,
+      "expectedVerdict": "pass"
+    },
+    {
+      "id": "CL-P0-005",
+      "risk": "ledger_balance_matches_sum",
+      "startingLedger": [
+        { "userId": "qa-user-a", "delta": 10, "reason": "purchase_stripe", "ref": "purchase-001" },
+        { "userId": "qa-user-a", "delta": -1, "reason": "analyze_resume", "ref": "analysis-001" },
+        { "userId": "qa-user-a", "delta": -2, "reason": "donate_credits", "ref": "donation-001" }
+      ],
+      "expectedFinalBalance": 7,
+      "expectedVerdict": "pass"
+    },
+    {
+      "id": "CL-P0-006",
+      "risk": "cross_user_balance_isolation",
+      "startingLedger": [
+        { "userId": "qa-user-a", "delta": 5, "reason": "purchase_stripe", "ref": "purchase-a-001" },
+        { "userId": "qa-user-b", "delta": 2, "reason": "purchase_stripe", "ref": "purchase-b-001" }
+      ],
+      "action": {
+        "type": "analyze_resume",
+        "userId": "qa-user-a",
+        "result": "success",
+        "ref": "analysis-a-001"
+      },
+      "expectedBalances": {
+        "qa-user-a": 4,
+        "qa-user-b": 2
+      },
+      "expectedVerdict": "pass"
+    }
+  ]
+}
