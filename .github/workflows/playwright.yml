@@ -74,7 +74,14 @@ jobs:
       - name: Upload JUnit results to TestRail
         if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.upload_to_testrail == 'true' }}
         run: |
-          trcli -y \
+          echo "Checking TestRail env values are present..."
+          test -n "$TESTRAIL_URL"
+          test -n "$TESTRAIL_USER"
+          test -n "$TESTRAIL_API_KEY"
+
+          trcli --version
+
+          trcli -y --verbose \
             -h "$TESTRAIL_URL" \
             --project "Git-a-Job Automation" \
             --username "$TESTRAIL_USER" \
