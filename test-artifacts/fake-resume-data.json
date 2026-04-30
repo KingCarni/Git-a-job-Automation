@@ -1,0 +1,41 @@
+{
+  "resumes": [
+    {
+      "id": "clean-qa-resume",
+      "candidateName": "Alex Morgan",
+      "email": "alex.morgan.qa@example.com",
+      "role": "QA Analyst",
+      "summary": "QA Analyst with experience testing web applications, documenting defects, and supporting regression testing.",
+      "skills": ["Manual Testing", "Regression Testing", "Jira", "Bug Reporting", "Agile"],
+      "experience": [
+        {
+          "company": "Northstar Learning Labs",
+          "title": "QA Analyst",
+          "bullets": [
+            "Tested web application features across student and educator workflows.",
+            "Documented defects with clear reproduction steps and expected results.",
+            "Supported regression testing before production releases."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "weak-match-resume",
+      "candidateName": "Jordan Lee",
+      "email": "jordan.lee.marketing@example.com",
+      "role": "Marketing Coordinator",
+      "summary": "Marketing coordinator with experience supporting campaigns and social media content.",
+      "skills": ["Content Planning", "Social Media", "Email Campaigns"],
+      "experience": [
+        {
+          "company": "BrightPath Media",
+          "title": "Marketing Coordinator",
+          "bullets": [
+            "Created campaign calendars for digital marketing launches.",
+            "Prepared social media copy and tracked engagement metrics."
+          ]
+        }
+      ]
+    }
+  ]
+}

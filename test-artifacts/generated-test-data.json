@@ -1,0 +1,83 @@
+{
+  "generatedAt": "2026-04-30T10:56:30.497Z",
+  "users": [
+    {
+      "id": "qa-user-with-credits",
+      "email": "qa.user.credits@example.com",
+      "role": "user",
+      "credits": 10
+    },
+    {
+      "id": "qa-user-zero-credits",
+      "email": "qa.user.zero@example.com",
+      "role": "user",
+      "credits": 0
+    },
+    {
+      "id": "qa-admin-user",
+      "email": "qa.admin@example.com",
+      "role": "admin",
+      "credits": 25
+    },
+    {
+      "id": "qa-user-a",
+      "email": "qa.user.a@example.com",
+      "role": "user",
+      "credits": 5
+    },
+    {
+      "id": "qa-user-b",
+      "email": "qa.user.b@example.com",
+      "role": "user",
+      "credits": 2
+    }
+  ],
+  "creditLedger": [
+    {
+      "id": "ledger-001",
+      "userId": "qa-user-with-credits",
+      "delta": 10,
+      "reason": "purchase_stripe",
+      "ref": "stripe-test-event-001"
+    },
+    {
+      "id": "ledger-002",
+      "userId": "qa-user-with-credits",
+      "delta": -1,
+      "reason": "analyze_resume",
+      "ref": "analysis-test-001"
+    },
+    {
+      "id": "ledger-003",
+      "userId": "qa-user-zero-credits",
+      "delta": 0,
+      "reason": "initial_state",
+      "ref": "seed-zero-credits"
+    }
+  ],
+  "analysisRecords": [
+    {
+      "id": "analysis-001",
+      "userId": "qa-user-a",
+      "resumeId": "clean-qa-resume",
+      "jobDescriptionId": "qa-analyst-edtech",
+      "score": 82,
+      "missingKeywords": [
+        "Playwright",
+        "API testing"
+      ]
+    },
+    {
+      "id": "analysis-002",
+      "userId": "qa-user-b",
+      "resumeId": "weak-match-resume",
+      "jobDescriptionId": "qa-analyst-edtech",
+      "score": 34,
+      "missingKeywords": [
+        "QA",
+        "Regression Testing",
+        "Jira"
+      ]
+    }
+  ]
+}
