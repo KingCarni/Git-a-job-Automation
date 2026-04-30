@@ -15,7 +15,7 @@ function sumLedger(entries, userId) {
 }
 
 test.describe('Credit ledger regression fixture validation', () => {
-  test('credit ledger cases have required fields', async () => {
+  test('GAJ-CREDIT-001 - Credit ledger cases have required fields', async () => {
     const data = readJson('ledger-cases/credit-ledger-regression-cases.json');
 
     expect(data.suite).toBe('credit-ledger-regression-cases');
@@ -30,7 +30,7 @@ test.describe('Credit ledger regression fixture validation', () => {
     }
   });
 
-  test('ledger balance case matches sum of deltas', async () => {
+  test('GAJ-CREDIT-002 - Ledger balance matches sum of deltas', async () => {
     const data = readJson('ledger-cases/credit-ledger-regression-cases.json');
     const balanceCase = data.cases.find((testCase) => testCase.id === 'CL-P0-005');
 
@@ -38,7 +38,7 @@ test.describe('Credit ledger regression fixture validation', () => {
     expect(sumLedger(balanceCase.startingLedger)).toBe(balanceCase.expectedFinalBalance);
   });
 
-  test('cross-user balance isolation case scopes balances by user', async () => {
+  test('GAJ-CREDIT-003 - Cross-user credit balances remain isolated', async () => {
     const data = readJson('ledger-cases/credit-ledger-regression-cases.json');
     const isolationCase = data.cases.find((testCase) => testCase.id === 'CL-P0-006');
 
@@ -58,7 +58,7 @@ test.describe('Credit ledger regression fixture validation', () => {
     expect(sumLedger(simulatedLedger, 'qa-user-b')).toBe(isolationCase.expectedBalances['qa-user-b']);
   });
 
-  test('webhook idempotency cases include duplicate event protections', async () => {
+  test('GAJ-CREDIT-004 - Webhook idempotency cases include duplicate event protections', async () => {
     const data = readJson('webhook-cases/stripe-webhook-idempotency-cases.json');
 
     expect(data.suite).toBe('stripe-webhook-idempotency-cases');
@@ -74,7 +74,7 @@ test.describe('Credit ledger regression fixture validation', () => {
     expect(sameSessionCase.expectedLedgerEntries).toBe(1);
   });
 
-  test('donation cases enforce paid-credit eligibility rules', async () => {
+  test('GAJ-CREDIT-005 - Donation cases enforce paid-credit eligibility rules', async () => {
     const data = readJson('donation-cases/donation-eligibility-cases.json');
 
     expect(data.suite).toBe('donation-eligibility-cases');
@@ -92,7 +92,7 @@ test.describe('Credit ledger regression fixture validation', () => {
     expect(paidCreditCase.expectedLedgerEntry.reason).toBe('donate_credits');
   });
 
-  test('credit ledger rules include required P0 protections', async () => {
+  test('GAJ-CREDIT-006 - Credit ledger rules include required P0 protections', async () => {
     const rules = readJson('expected-output/credit-ledger-rules.expected.json');
 
     expect(rules.allowedLedgerReasons).toContain('purchase_stripe');
@@ -104,3 +104,4 @@ test.describe('Credit ledger regression fixture validation', () => {
     expect(rules.recommendedApiAssertions).toContain('ledger entry count is correct');
   });
 });
+

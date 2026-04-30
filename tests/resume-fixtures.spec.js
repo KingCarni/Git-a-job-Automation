@@ -13,7 +13,7 @@ const expectedFixtures = [
 ];
 
 test.describe('Resume parser fixture pack validation', () => {
-  test('source text fixtures and expected output files exist', async () => {
+  test('GAJ-PARSER-001 - Resume fixture source and expected files exist', async () => {
     for (const fixtureId of expectedFixtures) {
       const sourcePath = path.join(
         fixtureRoot,
@@ -32,7 +32,7 @@ test.describe('Resume parser fixture pack validation', () => {
     }
   });
 
-  test('expected output files are valid JSON', async () => {
+  test('GAJ-PARSER-002 - Resume expected-output files are valid JSON', async () => {
     for (const fixtureId of expectedFixtures) {
       const expectedPath = path.join(
         fixtureRoot,
@@ -51,7 +51,7 @@ test.describe('Resume parser fixture pack validation', () => {
     }
   });
 
-  test('fixtures use fake example emails only', async () => {
+  test('GAJ-PARSER-003 - Resume fixtures use fake/anonymized emails', async () => {
     const sourceDir = path.join(fixtureRoot, 'source-text');
     const files = fs.readdirSync(sourceDir).filter((file) => file.endsWith('.txt'));
 
@@ -66,7 +66,7 @@ test.describe('Resume parser fixture pack validation', () => {
     }
   });
 
-  test('unsupported and corrupt fixture placeholders exist', async () => {
+  test('GAJ-PARSER-004 - Unsupported and corrupt fixture placeholders exist', async () => {
     expect(
       fs.existsSync(path.join(fixtureRoot, 'unsupported', 'unsupported-resume.txt'))
     ).toBeTruthy();
@@ -76,3 +76,4 @@ test.describe('Resume parser fixture pack validation', () => {
     ).toBeTruthy();
   });
 });
+

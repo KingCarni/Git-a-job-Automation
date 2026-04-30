@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 test.describe('Test data fixture validation', () => {
-  test('generated test data has required user and ledger records', async () => {
+  test('GAJ-DATA-001 - Generated test data has required user and ledger records', async () => {
     const filePath = path.join(
       __dirname,
       '..',
@@ -29,3 +29,4 @@ test.describe('Test data fixture validation', () => {
     expect(userWithCredits.credits).toBeGreaterThan(0);
   });
 });
+

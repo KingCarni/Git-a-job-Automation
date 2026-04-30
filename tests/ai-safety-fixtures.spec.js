@@ -9,7 +9,7 @@ function readJson(relativePath) {
 }
 
 test.describe('AI hallucination safety fixture validation', () => {
-  test('rewrite safety cases have required fields', async () => {
+  test('GAJ-AI-001 - Rewrite safety cases have required fields', async () => {
     const data = readJson('rewrite-cases/rewrite-safety-cases.json');
 
     expect(data.suite).toBe('rewrite-safety-cases');
@@ -27,7 +27,7 @@ test.describe('AI hallucination safety fixture validation', () => {
     }
   });
 
-  test('unsafe rewrite examples include their blocked claims', async () => {
+  test('GAJ-AI-002 - Unsafe rewrite examples include blocked claims', async () => {
     const data = readJson('rewrite-cases/rewrite-safety-cases.json');
     const failingCases = data.cases.filter((testCase) => testCase.expectedVerdict === 'fail');
 
@@ -47,7 +47,7 @@ test.describe('AI hallucination safety fixture validation', () => {
     }
   });
 
-  test('safe rewrites do not contain blocked claims', async () => {
+  test('GAJ-AI-003 - Safe rewrites do not contain blocked claims', async () => {
     const data = readJson('rewrite-cases/rewrite-safety-cases.json');
 
     for (const testCase of data.cases) {
@@ -59,7 +59,7 @@ test.describe('AI hallucination safety fixture validation', () => {
     }
   });
 
-  test('analysis safety cases cover prompt injection and hiring guarantee risks', async () => {
+  test('GAJ-AI-004 - Analysis safety cases cover prompt injection and hiring guarantee risks', async () => {
     const data = readJson('analysis-cases/analysis-safety-cases.json');
 
     expect(data.suite).toBe('analysis-safety-cases');
@@ -73,7 +73,7 @@ test.describe('AI hallucination safety fixture validation', () => {
     expect(risks).toContain('leadership_gap');
   });
 
-  test('safety rules include blocked terms and safe language examples', async () => {
+  test('GAJ-AI-005 - Safety rules include blocked terms and safe language examples', async () => {
     const rules = readJson('expected-output/safety-rules.expected.json');
 
     expect(rules.blockedTermsByRisk.tool_invention).toContain('Cypress');
@@ -85,3 +85,4 @@ test.describe('AI hallucination safety fixture validation', () => {
     expect(rules.safeLanguageExamples).toContain('only add this if true');
   });
 });
+
