@@ -1,0 +1,29 @@
+Act as a senior API QA analyst testing Git-a-Job, a ReactJS + JavaScript resume SaaS.
+
+Endpoint under test:
+[PASTE ENDPOINT]
+
+Context:
+- Resume upload and parsing
+- AI analysis against job description
+- ATS score
+- Missing keywords
+- AI rewrite suggestions
+- Authenticated and unauthenticated users
+- Credit consumption for AI actions
+- Stripe webhook credit purchases
+- Future AWS Lambda/DynamoDB-style testing mindset
+
+Generate:
+1. Valid request tests
+2. Invalid payload tests
+3. Auth/authorization tests
+4. Credit/billing side-effect tests
+5. Idempotency tests
+6. Timeout/failure-mode tests
+7. Data privacy tests
+8. Response-shape assertions
+9. What to automate first
+10. What to keep manual
+
+Avoid exact AI wording assertions unless output is deterministic.
