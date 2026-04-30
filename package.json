@@ -6,7 +6,7 @@
   "scripts": {
   "test": "playwright test",
   "test:ci": "playwright test tests/test-data-fixtures.spec.js tests/resume-fixtures.spec.js tests/ai-safety-fixtures.spec.js tests/credit-ledger-fixtures.spec.js",
-  "test:ci:junit": "playwright test tests/test-data-fixtures.spec.js tests/resume-fixtures.spec.js tests/ai-safety-fixtures.spec.js tests/credit-ledger-fixtures.spec.js --reporter=line,junit",
+  "test:ci:junit": "playwright test tests/test-data-fixtures.spec.js tests/resume-fixtures.spec.js tests/ai-safety-fixtures.spec.js tests/credit-ledger-fixtures.spec.js --reporter=line,junit,html",
   "test:local": "playwright test local",
   "test:all": "playwright test",
   "test:headed": "playwright test --headed",
