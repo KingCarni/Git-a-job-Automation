@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "playwright test",
-    "test:ci": "playwright test tests/test-data-fixtures.spec.js tests/resume-fixtures.spec.js",
+    "test:ci": "playwright test tests/test-data-fixtures.spec.js tests/resume-fixtures.spec.js tests/ai-safety-fixtures.spec.js",
     "test:local": "playwright test local",
     "test:all": "playwright test",
     "test:headed": "playwright test --headed",

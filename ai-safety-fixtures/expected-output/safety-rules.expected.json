@@ -1,0 +1,43 @@
+{
+  "blockedTermsByRisk": {
+    "tool_invention": [
+      "Cypress",
+      "Playwright",
+      "Selenium",
+      "AWS Lambda",
+      "DynamoDB",
+      "Kubernetes",
+      "Terraform"
+    ],
+    "metric_invention": [
+      "30%",
+      "50%",
+      "doubled",
+      "reduced by",
+      "increased by",
+      "saved $",
+      "saved hours"
+    ],
+    "leadership_inflation": [
+      "led the team",
+      "managed a team",
+      "owned QA strategy",
+      "directed QA",
+      "supervised testers"
+    ],
+    "hiring_guarantee": [
+      "guarantee",
+      "will get hired",
+      "will get an interview",
+      "perfect candidate",
+      "score 100"
+    ]
+  },
+  "safeLanguageExamples": [
+    "appears to be a gap",
+    "only add this if true",
+    "consider learning",
+    "highlight related experience where accurate",
+    "based on the resume content provided"
+  ]
+}
