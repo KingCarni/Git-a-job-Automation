@@ -1,0 +1,36 @@
+Alex Morgan
+alex.morgan.qa@example.com | 555-0101 | Vancouver, BC
+
+SUMMARY
+QA Analyst with experience testing web applications, documenting defects, and supporting regression testing in Agile teams.
+
+SKILLS
+Manual Testing
+Regression Testing
+Exploratory Testing
+Jira
+Bug Reporting
+Agile/Scrum
+ReactJS Testing
+API Testing
+
+WORK EXPERIENCE
+QA Analyst
+Northstar Learning Labs
+January 2022 - Present
+- Tested web application features across student and educator workflows.
+- Documented defects with clear reproduction steps, expected results, and screenshots.
+- Supported regression testing before production releases.
+- Collaborated with developers to verify bug fixes and prevent regressions.
+
+QA Tester
+Maple Ridge Software Studio
+June 2020 - December 2021
+- Executed manual smoke and regression tests for SaaS dashboard features.
+- Reviewed acceptance criteria and identified missing edge cases.
+- Reported UI inconsistencies and data display issues.
+
+EDUCATION
+Diploma in Software Quality Assurance
+Pacific Technical College
+2020

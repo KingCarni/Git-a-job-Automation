@@ -1,0 +1,16 @@
+Morgan Rivera
+morgan.rivera.qa@example.com | 555-0104
+
+Summary
+QA tester with experience reviewing web application behavior, documenting bugs, and helping teams release stable features.
+
+Experience
+QA Tester at Greenfield SaaS from 2021 to 2024. Tested user flows, reviewed issue fixes, documented bugs, and supported release validation. Worked closely with developers and product teammates during sprint testing.
+
+Support Analyst at Atlas Helpdesk from 2019 to 2021. Investigated user issues, reproduced reported problems, and escalated product defects with clear notes.
+
+Skills
+Manual testing, regression testing, exploratory testing, bug reporting, Jira, Agile, user acceptance testing.
+
+Education
+Certificate in Software Testing, Westbridge College, 2019.

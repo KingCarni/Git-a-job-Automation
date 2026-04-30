@@ -1,0 +1,31 @@
+Taylor Chen
+taylor.chen.qa@example.com | 555-0102 | Remote
+
+PROFILE
+Quality-focused tester with experience across web applications, bug reporting, release checks, and cross-functional QA support.
+
+CORE SKILLS
+Manual QA                 Jira
+Regression Testing        Agile
+Exploratory Testing       Bug Reproduction
+API Testing               Release Validation
+
+EXPERIENCE
+QA Analyst
+BrightPath Education Tools
+March 2021 - Present
+- Tested teacher dashboard workflows and student progress views.
+- Verified bug fixes across Chrome, Firefox, and mobile viewport sizes.
+- Created regression notes for release candidates.
+
+Associate QA Tester
+CloudShelf Apps
+May 2019 - February 2021
+- Tested account settings, onboarding, and reporting features.
+- Wrote defect reports with expected and actual results.
+- Supported sprint-end validation.
+
+EDUCATION
+Certificate in Web Application Testing
+North Coast Learning Institute
+2019

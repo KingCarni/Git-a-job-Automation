@@ -1,0 +1,29 @@
+{
+  "fixtureId": "clean-qa-resume",
+  "expectedCandidateName": "Alex Morgan",
+  "expectedEmail": "alex.morgan.qa@example.com",
+  "expectedSections": ["SUMMARY", "SKILLS", "WORK EXPERIENCE", "EDUCATION"],
+  "expectedSkills": [
+    "Manual Testing",
+    "Regression Testing",
+    "Exploratory Testing",
+    "Jira",
+    "Bug Reporting",
+    "Agile/Scrum",
+    "ReactJS Testing",
+    "API Testing"
+  ],
+  "mustContainBullets": [
+    "Tested web application features across student and educator workflows.",
+    "Documented defects with clear reproduction steps, expected results, and screenshots.",
+    "Supported regression testing before production releases."
+  ],
+  "mustNotContain": [
+    "Cypress",
+    "Playwright",
+    "AWS Lambda",
+    "DynamoDB",
+    "managed a QA team",
+    "reduced defects by 30%"
+  ]
+}

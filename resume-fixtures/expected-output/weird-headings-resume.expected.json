@@ -1,0 +1,22 @@
+{
+  "fixtureId": "weird-headings-resume",
+  "expectedCandidateName": "Jordan Patel",
+  "expectedEmail": "jordan.patel.qa@example.com",
+  "expectedSectionMeaning": {
+    "CAREER STORY": "summary",
+    "SELECTED WINS": "experience",
+    "TOOLBELT": "skills",
+    "LEARNING": "education"
+  },
+  "mustContainBullets": [
+    "Validated new learning platform features before release.",
+    "Investigated production issues reported by internal teams.",
+    "Communicated defect impact clearly during sprint reviews."
+  ],
+  "mustNotContain": [
+    "Cypress",
+    "AWS",
+    "team lead",
+    "automation framework"
+  ]
+}

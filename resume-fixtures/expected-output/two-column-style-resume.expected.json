@@ -1,0 +1,26 @@
+{
+  "fixtureId": "two-column-style-resume",
+  "expectedCandidateName": "Taylor Chen",
+  "expectedEmail": "taylor.chen.qa@example.com",
+  "expectedSections": ["PROFILE", "CORE SKILLS", "EXPERIENCE", "EDUCATION"],
+  "expectedSkills": [
+    "Manual QA",
+    "Regression Testing",
+    "Exploratory Testing",
+    "API Testing",
+    "Jira",
+    "Agile",
+    "Bug Reproduction",
+    "Release Validation"
+  ],
+  "mustContainBullets": [
+    "Tested teacher dashboard workflows and student progress views.",
+    "Verified bug fixes across Chrome, Firefox, and mobile viewport sizes.",
+    "Created regression notes for release candidates."
+  ],
+  "mustNotMix": [
+    "Skills should not appear as experience bullets.",
+    "Education should not appear inside experience.",
+    "Candidate contact information should not appear inside summary."
+  ]
+}

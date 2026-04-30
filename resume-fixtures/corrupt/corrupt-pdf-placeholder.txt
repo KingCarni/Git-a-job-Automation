@@ -1,0 +1,8 @@
+This placeholder represents a corrupt PDF fixture.
+
+Later implementation:
+- Add a deliberately malformed .pdf file.
+- Expected behavior: parsing fails gracefully.
+- No AI analysis should run.
+- No credits should be consumed.
+- UI should show recoverable error.

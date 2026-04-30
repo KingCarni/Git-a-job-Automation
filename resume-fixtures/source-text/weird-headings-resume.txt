@@ -1,0 +1,32 @@
+Jordan Patel
+jordan.patel.qa@example.com | 555-0103
+
+CAREER STORY
+Detail-oriented quality analyst who enjoys improving product reliability, user experience, and release confidence.
+
+SELECTED WINS
+QA Analyst
+StoryForge Learning
+2022 - Present
+- Validated new learning platform features before release.
+- Investigated production issues reported by internal teams.
+- Communicated defect impact clearly during sprint reviews.
+
+Product Tester
+Cedar Labs
+2020 - 2022
+- Tested user registration and profile management workflows.
+- Confirmed fixes for layout, navigation, and content display defects.
+
+TOOLBELT
+Jira
+Manual Testing
+Regression Testing
+Exploratory Testing
+Bug Reports
+Agile Collaboration
+
+LEARNING
+Software Testing Foundations Certificate
+Online QA Academy
+2020

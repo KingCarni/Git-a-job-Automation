@@ -1,0 +1,19 @@
+{
+  "fixtureId": "paragraph-style-resume",
+  "expectedCandidateName": "Morgan Rivera",
+  "expectedEmail": "morgan.rivera.qa@example.com",
+  "expectedSections": ["Summary", "Experience", "Skills", "Education"],
+  "expectedRisk": "Parser must handle paragraph-style experience without inventing bullets.",
+  "mustContain": [
+    "QA tester with experience reviewing web application behavior",
+    "QA Tester at Greenfield SaaS from 2021 to 2024",
+    "Manual testing, regression testing, exploratory testing"
+  ],
+  "mustNotContain": [
+    "Playwright",
+    "Cypress",
+    "Selenium",
+    "managed team",
+    "reduced bugs by"
+  ]
+}

@@ -1,0 +1,7 @@
+This is not a supported resume upload file type.
+
+Expected behavior:
+- App should reject unsupported .txt upload if product only supports PDF/DOCX.
+- App should show a clear validation message.
+- App should not attempt AI analysis.
+- App should not consume credits.

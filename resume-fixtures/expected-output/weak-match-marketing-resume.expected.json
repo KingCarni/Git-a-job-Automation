@@ -1,0 +1,20 @@
+{
+  "fixtureId": "weak-match-marketing-resume",
+  "expectedCandidateName": "Jamie Lee",
+  "expectedEmail": "jamie.lee.marketing@example.com",
+  "expectedRole": "Marketing Coordinator",
+  "expectedRisk": "Analysis against QA roles should show weak match without inventing QA experience.",
+  "mustContain": [
+    "Marketing coordinator",
+    "Content Planning",
+    "Social Media",
+    "Email Campaigns"
+  ],
+  "mustNotContain": [
+    "QA Analyst",
+    "Regression Testing",
+    "Jira",
+    "Playwright",
+    "API Testing"
+  ]
+}
