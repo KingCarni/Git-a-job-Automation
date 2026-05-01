@@ -12,7 +12,8 @@
   "test:all": "playwright test",
   "test:headed": "playwright test --headed",
   "report": "playwright show-report",
-  "generate:qa": "node scripts/generate-qa-package.js"
+  "generate:qa": "node scripts/generate-qa-package.js",
+  "import:testrail-csv": "node scripts/import-testrail-csv.js"
 },
   "keywords": [],
   "author": "",
