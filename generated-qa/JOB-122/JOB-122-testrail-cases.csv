@@ -1,0 +1,10 @@
+Section,Title,Type,Priority,Estimate,References,Preconditions,Steps,Expected Result,Is Automated,Automation Type,Automation ID,Playwright File,Playwright Command,Notes
+Manual - 00 Public Smoke,GAJ-UI-001 - Page loads without critical error,Smoke,High,5m,JOB-122,Target environment is available.,"1. Open the target page.
+2. Wait for page load.
+3. Check for major visible error states.",Page loads successfully without a critical error.,Future,Future Automation,GAJ-UI-001,generated-qa/JOB-122/JOB-122-fixture-test.spec.js,Not automated yet,Basic smoke check.
+Manual - 00 Public Smoke,GAJ-UI-002 - Primary CTA is visible and actionable,UI,Medium,3m,JOB-122,Target page is loaded.,"1. Locate primary CTA.
+2. Click or inspect destination.
+3. Verify expected navigation/action.",Primary CTA is visible and leads to the expected flow.,Future,Future Automation,GAJ-UI-002,generated-qa/JOB-122/JOB-122-fixture-test.spec.js,Not automated yet,Conversion/navigation check.
+Manual - 00 Public Smoke,GAJ-UI-003 - Header/navigation links do not break primary flow,Regression,Medium,3m,JOB-122,Header/nav is visible.,"1. Click primary nav links.
+2. Observe route changes.
+3. Confirm no broken or blank pages.",Navigation works without broken pages or dead ends.,Future,Future Automation,GAJ-UI-003,generated-qa/JOB-122/JOB-122-fixture-test.spec.js,Not automated yet,Useful broad smoke check.

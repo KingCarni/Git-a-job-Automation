@@ -1,0 +1,41 @@
+{
+  "issueKey": "JOB-122",
+  "feature": "ui-navigation-smoke",
+  "rules": {
+    "pageLoads": true,
+    "ctaWorks": true,
+    "navSafe": true
+  },
+  "cases": [
+    {
+      "id": "GAJ-UI-001",
+      "title": "Page loads without critical error",
+      "priority": "High",
+      "type": "Smoke",
+      "expected": "Page loads successfully without a critical error.",
+      "ruleRefs": [
+        "pageLoads"
+      ]
+    },
+    {
+      "id": "GAJ-UI-002",
+      "title": "Primary CTA is visible and actionable",
+      "priority": "Medium",
+      "type": "UI",
+      "expected": "Primary CTA is visible and leads to the expected flow.",
+      "ruleRefs": [
+        "ctaWorks"
+      ]
+    },
+    {
+      "id": "GAJ-UI-003",
+      "title": "Header/navigation links do not break primary flow",
+      "priority": "Medium",
+      "type": "Regression",
+      "expected": "Navigation works without broken pages or dead ends.",
+      "ruleRefs": [
+        "navSafe"
+      ]
+    }
+  ]
+}

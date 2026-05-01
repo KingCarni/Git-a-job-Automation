@@ -1,0 +1,52 @@
+{
+  "issueKey": "JOB-82",
+  "feature": "auth-access-control",
+  "rules": {
+    "loggedOutBlocked": true,
+    "authUserAllowed": true,
+    "protectedApiRejectsUnauth": true,
+    "staleSessionSafe": true
+  },
+  "cases": [
+    {
+      "id": "GAJ-AUTH-001",
+      "title": "Logged-out user is blocked from private resume analyzer",
+      "priority": "High",
+      "type": "Security",
+      "expected": "Logged-out user is redirected or blocked safely.",
+      "ruleRefs": [
+        "loggedOutBlocked"
+      ]
+    },
+    {
+      "id": "GAJ-AUTH-002",
+      "title": "Authenticated user can access private resume analyzer",
+      "priority": "High",
+      "type": "Functional",
+      "expected": "Authenticated user can access the private analyzer experience.",
+      "ruleRefs": [
+        "authUserAllowed"
+      ]
+    },
+    {
+      "id": "GAJ-AUTH-003",
+      "title": "Protected API rejects unauthenticated request",
+      "priority": "High",
+      "type": "Security",
+      "expected": "API rejects request without exposing private data.",
+      "ruleRefs": [
+        "protectedApiRejectsUnauth"
+      ]
+    },
+    {
+      "id": "GAJ-AUTH-004",
+      "title": "Stale session is handled safely",
+      "priority": "Medium",
+      "type": "Regression",
+      "expected": "Stale session does not allow unauthorized access or corrupt state.",
+      "ruleRefs": [
+        "staleSessionSafe"
+      ]
+    }
+  ]
+}

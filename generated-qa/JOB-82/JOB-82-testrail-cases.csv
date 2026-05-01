@@ -1,0 +1,13 @@
+Section,Title,Type,Priority,Estimate,References,Preconditions,Steps,Expected Result,Is Automated,Automation Type,Automation ID,Playwright File,Playwright Command,Notes
+Manual - 01 Auth & Access Control,GAJ-AUTH-001 - Logged-out user is blocked from private resume analyzer,Security,High,5m,JOB-82,User is logged out.,"1. Navigate directly to private resume analyzer route.
+2. Observe response or redirect.
+3. Check that private data is not shown.",Logged-out user is redirected or blocked safely.,Yes,Playwright Fixture,GAJ-AUTH-001,generated-qa/JOB-82/JOB-82-fixture-test.spec.js,npx playwright test generated-qa/JOB-82/JOB-82-fixture-test.spec.js,Basic auth gate.
+Manual - 01 Auth & Access Control,GAJ-AUTH-002 - Authenticated user can access private resume analyzer,Functional,High,5m,JOB-82,User is authenticated.,"1. Navigate to private analyzer route.
+2. Allow page/session to load.
+3. Observe analyzer availability.",Authenticated user can access the private analyzer experience.,Future,Future Automation,GAJ-AUTH-002,generated-qa/JOB-82/JOB-82-fixture-test.spec.js,Not automated yet,Requires reliable test auth harness.
+Manual - 01 Auth & Access Control,GAJ-AUTH-003 - Protected API rejects unauthenticated request,Security,High,5m,JOB-82,No valid session/token is provided.,"1. Call protected API endpoint without auth.
+2. Review status and response body.
+3. Check for data leakage.",API rejects request without exposing private data.,Future,Future Automation,GAJ-AUTH-003,generated-qa/JOB-82/JOB-82-fixture-test.spec.js,Not automated yet,API-level auth coverage.
+Manual - 01 Auth & Access Control,GAJ-AUTH-004 - Stale session is handled safely,Regression,Medium,3m,JOB-82,Expired/stale session can be simulated.,"1. Open private route with stale session.
+2. Trigger protected action.
+3. Observe refresh/logout behavior.",Stale session does not allow unauthorized access or corrupt state.,Future,Future Automation,GAJ-AUTH-004,generated-qa/JOB-82/JOB-82-fixture-test.spec.js,Not automated yet,Session edge case.
