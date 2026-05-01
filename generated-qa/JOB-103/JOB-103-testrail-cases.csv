@@ -1,0 +1,31 @@
+Section,Title,Type,Priority,Estimate,References,Preconditions,Steps,Expected Result,Is Automated,Automation Type,Automation ID,Playwright File,Playwright Command,Notes
+Manual - 08 Future Authenticated E2E,GAJ-FTUE-001 - First-time user enters setup mode,Functional,High,5m,JOB-103,User is new and has no canonical structured resume or completed onboarding resume.,"1. Open the resume experience as a first-time user.
+2. Allow resume engine mode selection to run.
+3. Observe the selected mode.",User enters first-time setup mode instead of normal job-aware mode.,Yes,Playwright Fixture,GAJ-FTUE-001,generated-qa/JOB-103/JOB-103-fixture-test.spec.js,npx playwright test generated-qa/JOB-103/JOB-103-fixture-test.spec.js,Core mode-selection rule for new users.
+Manual - 08 Future Authenticated E2E,GAJ-FTUE-002 - Returning user bypasses setup mode,Regression,High,5m,JOB-103,User has a canonical structured resume/profile and completed onboarding state.,"1. Open the resume experience as a returning user.
+2. Allow resume engine mode selection to run.
+3. Observe the selected mode.",User bypasses setup mode and enters the normal job-aware path when applicable.,Yes,Playwright Fixture,GAJ-FTUE-002,generated-qa/JOB-103/JOB-103-fixture-test.spec.js,npx playwright test generated-qa/JOB-103/JOB-103-fixture-test.spec.js,Prevents returning users from being trapped in onboarding.
+Manual - 08 Future Authenticated E2E,GAJ-FTUE-003 - Setup mode uses shared resume engine,Architecture,High,5m,JOB-103,First-time setup mode is available.,"1. Enter setup mode.
+2. Inspect behavior/components used by setup mode.
+3. Compare with normal resume engine behavior where practical.","Setup mode is a mode/state of the shared resume engine, not a separate divergent resume system.",Future,Future Automation,GAJ-FTUE-003,generated-qa/JOB-103/JOB-103-fixture-test.spec.js,Not automated yet,Mostly architectural/manual until implementation exposes testable hooks.
+Manual - 08 Future Authenticated E2E,GAJ-FTUE-004 - Initial profile build does not charge credits,Business Rule,High,5m,JOB-103,First-time user is eligible for initial resume/profile setup.,"1. Start first-time resume/profile setup.
+2. Complete initial setup actions.
+3. Review credit balance and credit ledger.",Initial profile setup is free and does not consume credits.,Yes,Playwright Fixture,GAJ-FTUE-004,generated-qa/JOB-103/JOB-103-fixture-test.spec.js,npx playwright test generated-qa/JOB-103/JOB-103-fixture-test.spec.js,Critical monetization and trust check.
+Manual - 08 Future Authenticated E2E,GAJ-FTUE-005 - Completing setup persists canonical structured resume,Data Integrity,High,5m,JOB-103,First-time user has completed setup inputs or imported resume data.,"1. Complete guided resume setup.
+2. Save/finish the setup flow.
+3. Reload account/profile or query stored profile state.",A canonical structured resume/profile snapshot is persisted and available for ATS/matching.,Yes,Playwright Fixture,GAJ-FTUE-005,generated-qa/JOB-103/JOB-103-fixture-test.spec.js,npx playwright test generated-qa/JOB-103/JOB-103-fixture-test.spec.js,Core data persistence check.
+Manual - 08 Future Authenticated E2E,GAJ-FTUE-006 - User routes to Account/Profile after setup,Navigation,Medium,3m,JOB-103,First-time user completes setup.,"1. Finish first-time setup.
+2. Observe the next route or CTA.
+3. Open Account/Profile if routed there.",User is routed or prompted toward Account/Profile for optional cleanup after setup.,Future,Future Automation,GAJ-FTUE-006,generated-qa/JOB-103/JOB-103-fixture-test.spec.js,Not automated yet,May depend on final UX routing decision.
+Manual - 08 Future Authenticated E2E,GAJ-FTUE-007 - User can continue into Jobs/Match after setup,Navigation,Medium,3m,JOB-103,User has completed setup and has a canonical structured resume/profile.,"1. Complete first-time setup.
+2. Choose to continue into Jobs/Match or Apply Pack flow.
+3. Observe whether the profile is available to the downstream flow.",User can continue into Jobs/Match with the canonical profile available.,Future,Future Automation,GAJ-FTUE-007,generated-qa/JOB-103/JOB-103-fixture-test.spec.js,Not automated yet,Good later E2E candidate.
+Manual - 08 Future Authenticated E2E,GAJ-FTUE-008 - Job-aware mode uses canonical profile after onboarding,Regression,High,5m,JOB-103,User completed onboarding and has a canonical structured profile. Job/role context exists.,"1. Open a job-aware resume or matching flow.
+2. Load or apply role/job context.
+3. Observe the source profile used by the flow.",Job-aware mode uses the canonical structured profile created during setup.,Yes,Playwright Fixture,GAJ-FTUE-008,generated-qa/JOB-103/JOB-103-fixture-test.spec.js,npx playwright test generated-qa/JOB-103/JOB-103-fixture-test.spec.js,Connects FTUE output to later matching/ATS behavior.
+Manual - 08 Future Authenticated E2E,GAJ-FTUE-009 - Tutorial messaging explains base resume vs role tailoring,Content,Medium,3m,JOB-103,First-time user is in setup/tutorial flow.,"1. Open setup/tutorial messaging.
+2. Read the explanation for base resume/profile setup.
+3. Review any mention of tailoring per role later.",Messaging clearly explains that the user builds a strong base resume once and tailors per role later.,Future,Future Automation,GAJ-FTUE-009,generated-qa/JOB-103/JOB-103-fixture-test.spec.js,Not automated yet,Manual content/UX review.
+Manual - 08 Future Authenticated E2E,GAJ-FTUE-010 - Incomplete onboarding resumes correctly,Edge Case,High,5m,JOB-103,User starts onboarding but does not complete setup.,"1. Begin first-time setup.
+2. Exit or refresh before completion.
+3. Return to the resume experience.",User can resume setup without being incorrectly marked complete or losing entered/imported state.,Yes,Playwright Fixture,GAJ-FTUE-010,generated-qa/JOB-103/JOB-103-fixture-test.spec.js,npx playwright test generated-qa/JOB-103/JOB-103-fixture-test.spec.js,Important state recovery case.

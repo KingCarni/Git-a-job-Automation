@@ -1,0 +1,16 @@
+Section,Title,Type,Priority,Estimate,References,Preconditions,Steps,Expected Result,Is Automated,Automation Type,Automation ID,Playwright File,Playwright Command,Notes
+Manual - 05 Credit Ledger,GAJ-STRIPE-001 - Checkout completed event awards purchased credits,Integration,High,5m,JOB-104,Valid Stripe checkout.session.completed event fixture exists.,"1. Process valid checkout completed event.
+2. Review Stripe event handling result.
+3. Review credit ledger entries.",Purchased credits are awarded once with a purchase_stripe ledger reason/ref.,Future,Future Automation,GAJ-STRIPE-001,generated-qa/JOB-104/JOB-104-fixture-test.spec.js,Not automated yet,Core payment-to-credit path.
+Manual - 05 Credit Ledger,GAJ-STRIPE-002 - Duplicate Stripe event does not double-award credits,Regression,High,5m,JOB-104,Same Stripe event can be processed twice.,"1. Process Stripe event once.
+2. Process same Stripe event again.
+3. Review ledger entries.",Duplicate event is ignored/idempotent and credits are not double-awarded.,Yes,Playwright Fixture,GAJ-STRIPE-002,generated-qa/JOB-104/JOB-104-fixture-test.spec.js,npx playwright test generated-qa/JOB-104/JOB-104-fixture-test.spec.js,Critical billing idempotency.
+Manual - 05 Credit Ledger,GAJ-STRIPE-003 - Invalid signature is rejected,Security,High,5m,JOB-104,Webhook request with invalid signature is available.,"1. Submit webhook with invalid signature.
+2. Review response.
+3. Review ledger state.",Webhook is rejected and no credits are awarded.,Future,Future Automation,GAJ-STRIPE-003,generated-qa/JOB-104/JOB-104-fixture-test.spec.js,Not automated yet,Security boundary.
+Manual - 05 Credit Ledger,GAJ-STRIPE-004 - Unknown event type is handled safely,Negative,Medium,3m,JOB-104,Unknown/unhandled Stripe event fixture exists.,"1. Process unknown Stripe event type.
+2. Review response/log behavior.
+3. Review ledger state.",Event is safely ignored or acknowledged without creating credits.,Future,Future Automation,GAJ-STRIPE-004,generated-qa/JOB-104/JOB-104-fixture-test.spec.js,Not automated yet,Webhook resilience check.
+Manual - 05 Credit Ledger,GAJ-STRIPE-005 - Database failure does not mark credit award successful,Data Integrity,High,5m,JOB-104,Database write failure can be simulated.,"1. Process valid payment event while ledger write fails.
+2. Review response/error handling.
+3. Retry after DB recovery if applicable.",Failure does not create false success state and can be retried safely.,Future,Future Automation,GAJ-STRIPE-005,generated-qa/JOB-104/JOB-104-fixture-test.spec.js,Not automated yet,Prevents payment/credit inconsistency.

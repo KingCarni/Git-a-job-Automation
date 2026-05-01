@@ -14,7 +14,7 @@ const outputDir = path.join('generated-qa', issueKey);
 
 if (!fs.existsSync(inputPath)) {
   console.error(`Input file not found: ${inputPath}`);
-  console.error(`Create ${inputPath}, paste the Jira ticket content, then run this again.`);
+  console.error(`Create ${inputPath}, paste/fetch the Jira ticket content, then run this again.`);
   process.exit(1);
 }
 
@@ -36,21 +36,9 @@ function csvEscape(value) {
 
 function writeCsv(filePath, rows) {
   const columns = [
-    'Section',
-    'Title',
-    'Type',
-    'Priority',
-    'Estimate',
-    'References',
-    'Preconditions',
-    'Steps',
-    'Expected Result',
-    'Is Automated',
-    'Automation Type',
-    'Automation ID',
-    'Playwright File',
-    'Playwright Command',
-    'Notes',
+    'Section', 'Title', 'Type', 'Priority', 'Estimate', 'References', 'Preconditions', 'Steps',
+    'Expected Result', 'Is Automated', 'Automation Type', 'Automation ID', 'Playwright File',
+    'Playwright Command', 'Notes',
   ];
 
   const lines = [
@@ -65,35 +53,69 @@ function steps(...items) {
   return items.map((item, index) => `${index + 1}. ${item}`).join('\n');
 }
 
+function containsAny(text, terms) {
+  return terms.some((term) => text.includes(term));
+}
+
 function detectFeature(summary, text) {
   const combined = `${summary}\n${text}`.toLowerCase();
 
-  if (
-    combined.includes('ftue') ||
-    combined.includes('first-time setup') ||
-    combined.includes('first time setup') ||
-    combined.includes('first-time user') ||
-    combined.includes('first time user') ||
-    combined.includes('onboarding') ||
-    combined.includes('initial profile build') ||
-    combined.includes('canonical resume') ||
-    combined.includes('canonical structured resume') ||
-    combined.includes('shared resume engine') ||
-    combined.includes('job-aware mode') ||
-    combined.includes('setup mode')
-  ) {
-    return 'ftue-resume-onboarding';
-  }
+  if (containsAny(combined, [
+    'ftue', 'first-time setup', 'first time setup', 'first-time user', 'first time user',
+    'onboarding', 'initial profile build', 'canonical resume', 'canonical structured resume',
+    'shared resume engine', 'job-aware mode', 'setup mode',
+  ])) return 'ftue-resume-onboarding';
 
-  if (
-    combined.includes('daily bonus') ||
-    combined.includes('login bonus') ||
-    combined.includes('signs in') ||
-    combined.includes('sign in') ||
-    combined.includes('credits')
-  ) {
-    return 'daily-login-bonus';
-  }
+  if (containsAny(combined, [
+    'resume parser', 'resume parsing', 'parser fixture', 'pdf upload', 'docx upload',
+    'resume import', 'extract sections', 'two-column', 'two column', 'corrupt file',
+    'unsupported file', 'ocr',
+  ])) return 'resume-parser-import';
+
+  if (containsAny(combined, [
+    'hallucination', 'ai safety', 'rewrite', 'missing keyword', 'prompt injection',
+    'false claim', 'false claims', 'invent experience', 'hiring guarantee', 'ats analysis',
+    'ai analysis',
+  ])) return 'ai-analysis-safety';
+
+  if (containsAny(combined, [
+    'stripe', 'checkout.session.completed', 'webhook', 'payment', 'purchase credits',
+    'checkout', 'signature', 'stripe event',
+  ])) return 'stripe-webhooks';
+
+  if (containsAny(combined, [
+    'daily bonus', 'login bonus', 'signs in', 'sign in bonus', 'daily_login_bonus',
+  ])) return 'daily-login-bonus';
+
+  if (containsAny(combined, [
+    'credit ledger', 'creditsledger', 'paid credits', 'free credits', 'donation',
+    'donate credits', 'ledger delta', 'balance', 'idempotency',
+  ])) return 'credit-ledger-billing';
+
+  if (containsAny(combined, [
+    'auth', 'authentication', 'access control', 'logged-out', 'logged out', 'signin',
+    'sign in', 'sign-in', 'session', 'protected route', 'private route', 'account page',
+  ])) return 'auth-access-control';
+
+  if (containsAny(combined, [
+    'job search', 'job match', 'jobs/match', 'apply pack', 'saved job', 'role context',
+    'job context', 'tailor per role', 'matching',
+  ])) return 'job-search-match-apply';
+
+  if (containsAny(combined, [
+    'homepage', 'landing', 'cta', 'navigation', 'nav', 'header', 'footer', 'smoke',
+    'responsive',
+  ])) return 'ui-navigation-smoke';
+
+  if (containsAny(combined, [
+    'accessibility', 'a11y', 'keyboard', 'focus state', 'focus states', 'screen reader',
+    'aria', 'contrast', 'form label',
+  ])) return 'accessibility-usability';
+
+  if (containsAny(combined, [
+    'admin', 'donation pool', 'fulfill', 'admin-only', 'non-admin', 'request fulfillment',
+    'audit',
+  ])) return 'admin-donation-pool';
 
   return 'generic-feature';
 }
@@ -118,405 +140,347 @@ function buildRows(ticket, cases, section, playwrightFile) {
   }));
 }
 
-function buildDailyLoginBonusPackage(ticket) {
-  const section = 'Manual - 05 Credit Ledger';
+function makePackage(ticket, feature, section, cases, rules) {
   const playwrightFile = `generated-qa/${ticket.key}/${ticket.key}-fixture-test.spec.js`;
-
-  const cases = [
-    {
-      id: 'GAJ-CREDIT-DAILY-001',
-      title: 'First eligible sign-in grants 10 credits',
-      priority: 'High',
-      type: 'Functional',
-      preconditions: 'User account exists. User has not received the daily login bonus for the selected bonus date.',
-      steps: steps('Sign in as an eligible user.', 'Allow the daily bonus award logic to run.', 'Review the user credit balance and ledger entries.'),
-      expected: 'User receives exactly +10 credits and one daily_login_bonus ledger entry is created.',
-      automated: 'Future',
-      notes: 'Core happy path for daily bonus behavior.',
-    },
-    {
-      id: 'GAJ-CREDIT-DAILY-002',
-      title: 'Repeated same-day sign-in does not grant duplicate bonus',
-      priority: 'High',
-      type: 'Regression',
-      preconditions: 'User has already received a daily_login_bonus entry for the selected bonus date.',
-      steps: steps('Sign out if needed.', 'Sign in again as the same user on the same bonus date.', 'Review the user credit balance and ledger entries.'),
-      expected: 'No second +10 daily_login_bonus entry is created for the same user/date.',
-      automated: 'Future',
-      notes: 'Important idempotency check.',
-    },
-    {
-      id: 'GAJ-CREDIT-DAILY-003',
-      title: 'Daily bonus ledger entry uses correct reason and ref',
-      priority: 'High',
-      type: 'Data Integrity',
-      preconditions: 'Eligible user can receive daily login bonus.',
-      steps: steps('Trigger daily bonus award.', 'Inspect the resulting ledger entry.', 'Verify ledger reason and ref format.'),
-      expected: 'Ledger entry uses delta +10, reason daily_login_bonus, and a unique ref for user/date.',
-      automated: 'Yes',
-      notes: 'Can be checked in fixture-level automation before DB integration exists.',
-    },
-    {
-      id: 'GAJ-CREDIT-DAILY-004',
-      title: 'Daily bonus is isolated per user',
-      priority: 'High',
-      type: 'Data Integrity',
-      preconditions: 'Two different users exist and neither has received the daily bonus for the selected date.',
-      steps: steps('Sign in as User A and trigger daily bonus.', 'Sign in as User B and trigger daily bonus.', 'Review both users credit ledgers.'),
-      expected: 'Each user can receive their own +10 bonus. User A actions do not affect User B balance.',
-      automated: 'Yes',
-      notes: 'User isolation check.',
-    },
-    {
-      id: 'GAJ-CREDIT-DAILY-005',
-      title: 'Near-midnight sign-in does not double-award incorrectly',
-      priority: 'Medium',
-      type: 'Edge Case',
-      preconditions: 'Test environment can control or simulate bonus dates/timestamps.',
-      steps: steps('Trigger sign-in near the daily cutoff boundary.', 'Trigger another sign-in around the boundary.', 'Review ledger entries by bonus date.'),
-      expected: 'Bonus is awarded according to the intended date rule and does not duplicate unexpectedly.',
-      automated: 'Future',
-      notes: 'Requires clear timezone/date policy.',
-    },
-    {
-      id: 'GAJ-CREDIT-DAILY-006',
-      title: 'Concurrent sign-ins do not create duplicate bonus entries',
-      priority: 'High',
-      type: 'Regression',
-      preconditions: 'Eligible user exists. Test can simulate rapid or concurrent login requests.',
-      steps: steps('Trigger two sign-in/bonus attempts for the same user/date close together.', 'Review resulting ledger entries.', 'Review final credit balance.'),
-      expected: 'Only one +10 daily_login_bonus entry exists for the same user/date.',
-      automated: 'Future',
-      notes: 'Race-condition/idempotency check.',
-    },
-    {
-      id: 'GAJ-CREDIT-DAILY-007',
-      title: 'Bonus credits are not treated as paid or donatable credits',
-      priority: 'High',
-      type: 'Business Rule',
-      preconditions: 'User has only daily_login_bonus credits and no purchased credits.',
-      steps: steps('Award daily login bonus.', 'Attempt a paid-credit-only action such as donation if applicable.', 'Review eligibility calculation.'),
-      expected: 'Daily bonus credits are treated as free credits and do not count as paid/donatable credits.',
-      automated: 'Yes',
-      notes: 'Important because donation logic distinguishes paid credits from free credits.',
-    },
-    {
-      id: 'GAJ-CREDIT-DAILY-008',
-      title: 'UI credit count updates after daily bonus award',
-      priority: 'Medium',
-      type: 'UI',
-      preconditions: 'Eligible user exists and can sign in through the UI.',
-      steps: steps('Sign in as an eligible user.', 'Observe the header/account credit count.', 'Refresh or navigate if needed.'),
-      expected: 'Displayed credit count reflects the +10 daily bonus after the award is granted.',
-      automated: 'Future',
-      notes: 'UI/E2E check after auth test harness exists.',
-    },
-  ];
-
   const fixtures = {
     issueKey: ticket.key,
-    feature: 'daily-login-bonus',
-    creditPolicy: {
-      bonusAmount: 10,
-      reason: 'daily_login_bonus',
-      refPattern: 'daily_login_bonus:{userId}:{YYYY-MM-DD}',
-      paidCreditEligible: false,
-      maxAwardsPerUserPerBonusDate: 1,
-    },
-    cases: [
-      {
-        id: 'GAJ-CREDIT-DAILY-003',
-        scenario: 'ledger entry shape',
-        expectedLedgerEntry: {
-          userId: 'qa-user-a',
-          delta: 10,
-          reason: 'daily_login_bonus',
-          ref: 'daily_login_bonus:qa-user-a:2026-04-30',
-          paidCreditEligible: false,
-        },
-      },
-      {
-        id: 'GAJ-CREDIT-DAILY-002',
-        scenario: 'same user same day cannot duplicate',
-        expectedNewEntries: 0,
-        expectedFinalBalance: 10,
-      },
-      {
-        id: 'GAJ-CREDIT-DAILY-004',
-        scenario: 'different users can each receive bonus',
-        expectedLedgerEntry: {
-          userId: 'qa-user-b',
-          delta: 10,
-          reason: 'daily_login_bonus',
-          ref: 'daily_login_bonus:qa-user-b:2026-04-30',
-          paidCreditEligible: false,
-        },
-      },
-      {
-        id: 'GAJ-CREDIT-DAILY-007',
-        scenario: 'daily bonus credits are not paid credits',
-        expectedPaidCreditEligibleBalance: 0,
-        expectedTotalBalance: 10,
-      },
-    ],
+    feature,
+    rules,
+    cases: cases.map((testCase) => ({
+      id: testCase.id,
+      title: testCase.title,
+      priority: testCase.priority,
+      type: testCase.type,
+      expected: testCase.expected,
+      ruleRefs: testCase.ruleRefs || [],
+    })),
   };
 
   return { cases, testrailRows: buildRows(ticket, cases, section, playwrightFile), fixtures };
+}
+
+function makeCase(id, title, priority, type, preconditions, stepList, expected, automated, notes, ruleRefs) {
+  return { id, title, priority, type, preconditions, steps: steps(...stepList), expected, automated, notes, ruleRefs };
+}
+
+function buildResumeParserPackage(ticket) {
+  const cases = [
+    makeCase('GAJ-PARSER-IMP-001', 'PDF resume imports without parser crash', 'High', 'Functional',
+      'A valid fake/anonymized PDF resume fixture is available.',
+      ['Upload/import a valid PDF resume.', 'Run parsing/import flow.', 'Review extracted resume state.'],
+      'The PDF imports without crashing and produces usable structured resume data.', 'Yes',
+      'Core parser/import happy path.', ['validPdfSupported', 'structuredOutputRequired']),
+    makeCase('GAJ-PARSER-IMP-002', 'DOCX resume imports without parser crash', 'High', 'Functional',
+      'A valid fake/anonymized DOCX resume fixture is available.',
+      ['Upload/import a valid DOCX resume.', 'Run parsing/import flow.', 'Review extracted resume state.'],
+      'The DOCX imports without crashing and produces usable structured resume data.', 'Yes',
+      'Core DOCX import check.', ['validDocxSupported', 'structuredOutputRequired']),
+    makeCase('GAJ-PARSER-IMP-003', 'Unsupported file type is rejected safely', 'High', 'Negative',
+      'Unsupported test file is available.',
+      ['Attempt to upload unsupported file type.', 'Observe user-facing error.', 'Check that no corrupted resume state is saved.'],
+      'The app shows a safe error and does not save corrupted resume data.', 'Yes',
+      'Prevents bad parser state.', ['unsupportedRejectedSafely']),
+    makeCase('GAJ-PARSER-IMP-004', 'Corrupt resume file fails gracefully', 'High', 'Negative',
+      'Corrupt PDF/DOCX fixture is available.',
+      ['Upload corrupt resume fixture.', 'Run import/parser flow.', 'Observe error handling.'],
+      'The parser fails gracefully with no crash and no partial/corrupt profile save.', 'Yes',
+      'Protects import reliability.', ['corruptRejectedSafely']),
+    makeCase('GAJ-PARSER-IMP-005', 'Two-column resume layout preserves major sections', 'Medium', 'Regression',
+      'Two-column fake resume fixture is available.',
+      ['Import two-column resume.', 'Review parsed sections.', 'Compare against expected output.'],
+      'Major sections such as experience, education, skills, and contact details are not mixed or lost.', 'Future',
+      'Parser layout complexity check.', ['sectionIntegrityRequired']),
+    makeCase('GAJ-PARSER-IMP-006', 'Parsed resume data remains fake/anonymized in fixtures', 'Medium', 'Data Integrity',
+      'Fixture corpus is available.',
+      ['Review fixture input/output files.', 'Scan for non-fake emails or personal identifiers.', 'Confirm fixture data policy.'],
+      'Fixtures use fake/anonymized content only.', 'Yes',
+      'Prevents accidental real personal data in repo.', ['fakeDataOnly']),
+  ];
+  return makePackage(ticket, 'resume-parser-import', 'Manual - 03 Resume Parser Fixtures', cases, {
+    validPdfSupported: true, validDocxSupported: true, unsupportedRejectedSafely: true,
+    corruptRejectedSafely: true, structuredOutputRequired: true, sectionIntegrityRequired: true,
+    fakeDataOnly: true,
+  });
+}
+
+function buildAiSafetyPackage(ticket) {
+  const cases = [
+    makeCase('GAJ-AI-SAFE-001', 'Rewrite suggestions do not invent candidate experience', 'High', 'AI Safety',
+      'Resume bullet and job description inputs are available.',
+      ['Run AI rewrite/suggestion flow.', 'Compare output against original resume facts.', 'Look for invented tools, employers, metrics, or duties.'],
+      'Suggestions preserve candidate facts and do not invent experience.', 'Yes',
+      'Highest-risk AI behavior.', ['noInventedExperience']),
+    makeCase('GAJ-AI-SAFE-002', 'Job description keywords do not become false claims', 'High', 'AI Safety',
+      'Job description includes skills not present in the resume.',
+      ['Run analysis/rewrite flow.', 'Review missing keyword suggestions and rewrites.', 'Check whether missing skills are represented as experience.'],
+      'Missing job keywords remain advisory and are not converted into false resume claims.', 'Yes',
+      'Protects truthfulness and user trust.', ['missingKeywordsAdvisoryOnly']),
+    makeCase('GAJ-AI-SAFE-003', 'Prompt injection content is ignored safely', 'High', 'Security',
+      'Resume/job text contains prompt injection instructions.',
+      ['Submit content containing prompt injection.', 'Run AI analysis.', 'Review output for policy bypass or instruction leakage.'],
+      'The system ignores malicious instructions and provides safe analysis only.', 'Yes',
+      'Prompt injection regression coverage.', ['promptInjectionBlocked']),
+    makeCase('GAJ-AI-SAFE-004', 'Hiring guarantee language is blocked', 'Medium', 'AI Safety',
+      'Input or requested output encourages guaranteed hiring/result language.',
+      ['Run AI content generation.', 'Review generated text.', 'Check for guarantee claims.'],
+      'Output avoids guaranteed hiring, interview, or job-offer claims.', 'Yes',
+      'Avoids misleading user-facing claims.', ['noHiringGuarantees']),
+    makeCase('GAJ-AI-SAFE-005', 'Safe rewrite language remains specific and truthful', 'Medium', 'Regression',
+      'Valid resume bullet and role context exist.',
+      ['Generate a safe rewrite.', 'Review wording.', 'Check clarity, specificity, and truthfulness.'],
+      'Rewrite improves clarity without adding unsupported facts.', 'Future',
+      'Manual review may be needed for language quality.', ['truthfulRewrite']),
+  ];
+  return makePackage(ticket, 'ai-analysis-safety', 'Manual - 04 AI Safety / Hallucination', cases, {
+    noInventedExperience: true, missingKeywordsAdvisoryOnly: true, promptInjectionBlocked: true,
+    noHiringGuarantees: true, truthfulRewrite: true,
+  });
+}
+
+function buildCreditLedgerPackage(ticket) {
+  const cases = [
+    makeCase('GAJ-CREDIT-LEDGER-001', 'Credit balance equals sum of ledger deltas', 'High', 'Data Integrity',
+      'User has multiple credit ledger entries.',
+      ['Fetch or calculate user ledger entries.', 'Sum all deltas.', 'Compare against displayed/computed balance.'],
+      'Credit balance matches the sum of ledger deltas.', 'Yes', 'Core ledger invariant.', ['balanceFromDeltas']),
+    makeCase('GAJ-CREDIT-LEDGER-002', 'Paid credits are separated from free credits', 'High', 'Business Rule',
+      'User has purchased and free/bonus credits.',
+      ['Review ledger entries by reason.', 'Calculate paid-credit eligible balance.', 'Compare against donation/purchase-only eligibility.'],
+      'Paid credits remain distinguishable from free credits.', 'Yes', 'Required for donation eligibility.', ['paidVsFreeSeparated']),
+    makeCase('GAJ-CREDIT-LEDGER-003', 'Duplicate credit event does not double-award', 'High', 'Regression',
+      'Duplicate event/ref can be simulated.',
+      ['Submit or process first credit event.', 'Submit duplicate event with same ref.', 'Review ledger entries and balance.'],
+      'Only one ledger entry is created for the same idempotent ref.', 'Yes', 'Idempotency coverage.', ['idempotentRefs']),
+    makeCase('GAJ-CREDIT-LEDGER-004', 'Donation eligibility uses paid credits only', 'High', 'Business Rule',
+      'User has free credits and insufficient paid credits.',
+      ['Attempt credit donation.', 'Review validation result.', 'Review ledger state.'],
+      'Donation is blocked when paid-credit eligibility is insufficient.', 'Yes', 'Protects paid-credit accounting.', ['donationUsesPaidOnly']),
+    makeCase('GAJ-CREDIT-LEDGER-005', 'Ledger entries remain isolated by user', 'High', 'Data Integrity',
+      'Two users have separate ledger histories.',
+      ['Calculate User A balance.', 'Calculate User B balance.', 'Confirm no cross-user entries are counted.'],
+      'Each user balance is isolated to that user only.', 'Yes', 'Prevents account data leakage/corruption.', ['userIsolation']),
+  ];
+  return makePackage(ticket, 'credit-ledger-billing', 'Manual - 05 Credit Ledger', cases, {
+    balanceFromDeltas: true, paidVsFreeSeparated: true, idempotentRefs: true,
+    donationUsesPaidOnly: true, userIsolation: true,
+  });
+}
+
+function buildDailyLoginBonusPackage(ticket) {
+  const cases = [
+    makeCase('GAJ-CREDIT-DAILY-001', 'First eligible sign-in grants 10 credits', 'High', 'Functional',
+      'User account exists. User has not received the daily login bonus for the selected bonus date.',
+      ['Sign in as an eligible user.', 'Allow the daily bonus award logic to run.', 'Review the user credit balance and ledger entries.'],
+      'User receives exactly +10 credits and one daily_login_bonus ledger entry is created.', 'Future', 'Core happy path for daily bonus behavior.', ['bonusAmount', 'oncePerDay']),
+    makeCase('GAJ-CREDIT-DAILY-002', 'Repeated same-day sign-in does not grant duplicate bonus', 'High', 'Regression',
+      'User has already received a daily_login_bonus entry for the selected bonus date.',
+      ['Sign out if needed.', 'Sign in again as the same user on the same bonus date.', 'Review the user credit balance and ledger entries.'],
+      'No second +10 daily_login_bonus entry is created for the same user/date.', 'Future', 'Important idempotency check.', ['oncePerDay']),
+    makeCase('GAJ-CREDIT-DAILY-003', 'Daily bonus ledger entry uses correct reason and ref', 'High', 'Data Integrity',
+      'Eligible user can receive daily login bonus.',
+      ['Trigger daily bonus award.', 'Inspect the resulting ledger entry.', 'Verify ledger reason and ref format.'],
+      'Ledger entry uses delta +10, reason daily_login_bonus, and a unique ref for user/date.', 'Yes', 'Can be checked in fixture-level automation before DB integration exists.', ['bonusReason', 'uniqueRef']),
+    makeCase('GAJ-CREDIT-DAILY-004', 'Daily bonus is isolated per user', 'High', 'Data Integrity',
+      'Two different users exist and neither has received the daily bonus for the selected date.',
+      ['Sign in as User A and trigger daily bonus.', 'Sign in as User B and trigger daily bonus.', 'Review both users credit ledgers.'],
+      'Each user can receive their own +10 bonus. User A actions do not affect User B balance.', 'Yes', 'User isolation check.', ['userIsolation']),
+    makeCase('GAJ-CREDIT-DAILY-005', 'Near-midnight sign-in does not double-award incorrectly', 'Medium', 'Edge Case',
+      'Test environment can control or simulate bonus dates/timestamps.',
+      ['Trigger sign-in near the daily cutoff boundary.', 'Trigger another sign-in around the boundary.', 'Review ledger entries by bonus date.'],
+      'Bonus is awarded according to the intended date rule and does not duplicate unexpectedly.', 'Future', 'Requires clear timezone/date policy.', ['dateBoundarySafe']),
+    makeCase('GAJ-CREDIT-DAILY-006', 'Concurrent sign-ins do not create duplicate bonus entries', 'High', 'Regression',
+      'Eligible user exists. Test can simulate rapid or concurrent login requests.',
+      ['Trigger two sign-in/bonus attempts for the same user/date close together.', 'Review resulting ledger entries.', 'Review final credit balance.'],
+      'Only one +10 daily_login_bonus entry exists for the same user/date.', 'Future', 'Race-condition/idempotency check.', ['concurrentSafe']),
+    makeCase('GAJ-CREDIT-DAILY-007', 'Bonus credits are not treated as paid or donatable credits', 'High', 'Business Rule',
+      'User has only daily_login_bonus credits and no purchased credits.',
+      ['Award daily login bonus.', 'Attempt a paid-credit-only action such as donation if applicable.', 'Review eligibility calculation.'],
+      'Daily bonus credits are treated as free credits and do not count as paid/donatable credits.', 'Yes', 'Important because donation logic distinguishes paid credits from free credits.', ['bonusIsFreeCredit']),
+    makeCase('GAJ-CREDIT-DAILY-008', 'UI credit count updates after daily bonus award', 'Medium', 'UI',
+      'Eligible user exists and can sign in through the UI.',
+      ['Sign in as an eligible user.', 'Observe the header/account credit count.', 'Refresh or navigate if needed.'],
+      'Displayed credit count reflects the +10 daily bonus after the award is granted.', 'Future', 'UI/E2E check after auth test harness exists.', ['uiReflectsBalance']),
+  ];
+  return makePackage(ticket, 'daily-login-bonus', 'Manual - 05 Credit Ledger', cases, {
+    bonusAmount: 10, bonusReason: 'daily_login_bonus', oncePerDay: true,
+    uniqueRef: 'daily_login_bonus:{userId}:{YYYY-MM-DD}', bonusIsFreeCredit: true,
+    userIsolation: true, dateBoundarySafe: true, concurrentSafe: true, uiReflectsBalance: true,
+  });
+}
+
+function buildStripeWebhookPackage(ticket) {
+  const cases = [
+    makeCase('GAJ-STRIPE-001', 'Checkout completed event awards purchased credits', 'High', 'Integration',
+      'Valid Stripe checkout.session.completed event fixture exists.',
+      ['Process valid checkout completed event.', 'Review Stripe event handling result.', 'Review credit ledger entries.'],
+      'Purchased credits are awarded once with a purchase_stripe ledger reason/ref.', 'Future', 'Core payment-to-credit path.', ['checkoutAwardsCredits']),
+    makeCase('GAJ-STRIPE-002', 'Duplicate Stripe event does not double-award credits', 'High', 'Regression',
+      'Same Stripe event can be processed twice.',
+      ['Process Stripe event once.', 'Process same Stripe event again.', 'Review ledger entries.'],
+      'Duplicate event is ignored/idempotent and credits are not double-awarded.', 'Yes', 'Critical billing idempotency.', ['stripeEventIdempotency']),
+    makeCase('GAJ-STRIPE-003', 'Invalid signature is rejected', 'High', 'Security',
+      'Webhook request with invalid signature is available.',
+      ['Submit webhook with invalid signature.', 'Review response.', 'Review ledger state.'],
+      'Webhook is rejected and no credits are awarded.', 'Future', 'Security boundary.', ['signatureRequired']),
+    makeCase('GAJ-STRIPE-004', 'Unknown event type is handled safely', 'Medium', 'Negative',
+      'Unknown/unhandled Stripe event fixture exists.',
+      ['Process unknown Stripe event type.', 'Review response/log behavior.', 'Review ledger state.'],
+      'Event is safely ignored or acknowledged without creating credits.', 'Future', 'Webhook resilience check.', ['unknownEventsSafe']),
+    makeCase('GAJ-STRIPE-005', 'Database failure does not mark credit award successful', 'High', 'Data Integrity',
+      'Database write failure can be simulated.',
+      ['Process valid payment event while ledger write fails.', 'Review response/error handling.', 'Retry after DB recovery if applicable.'],
+      'Failure does not create false success state and can be retried safely.', 'Future', 'Prevents payment/credit inconsistency.', ['dbFailureSafe']),
+  ];
+  return makePackage(ticket, 'stripe-webhooks', 'Manual - 05 Credit Ledger', cases, {
+    checkoutAwardsCredits: true, stripeEventIdempotency: true, signatureRequired: true,
+    unknownEventsSafe: true, dbFailureSafe: true,
+  });
+}
+
+function buildAuthAccessPackage(ticket) {
+  const cases = [
+    makeCase('GAJ-AUTH-001', 'Logged-out user is blocked from private resume analyzer', 'High', 'Security',
+      'User is logged out.', ['Navigate directly to private resume analyzer route.', 'Observe response or redirect.', 'Check that private data is not shown.'],
+      'Logged-out user is redirected or blocked safely.', 'Yes', 'Basic auth gate.', ['loggedOutBlocked']),
+    makeCase('GAJ-AUTH-002', 'Authenticated user can access private resume analyzer', 'High', 'Functional',
+      'User is authenticated.', ['Navigate to private analyzer route.', 'Allow page/session to load.', 'Observe analyzer availability.'],
+      'Authenticated user can access the private analyzer experience.', 'Future', 'Requires reliable test auth harness.', ['authUserAllowed']),
+    makeCase('GAJ-AUTH-003', 'Protected API rejects unauthenticated request', 'High', 'Security',
+      'No valid session/token is provided.', ['Call protected API endpoint without auth.', 'Review status and response body.', 'Check for data leakage.'],
+      'API rejects request without exposing private data.', 'Future', 'API-level auth coverage.', ['protectedApiRejectsUnauth']),
+    makeCase('GAJ-AUTH-004', 'Stale session is handled safely', 'Medium', 'Regression',
+      'Expired/stale session can be simulated.', ['Open private route with stale session.', 'Trigger protected action.', 'Observe refresh/logout behavior.'],
+      'Stale session does not allow unauthorized access or corrupt state.', 'Future', 'Session edge case.', ['staleSessionSafe']),
+  ];
+  return makePackage(ticket, 'auth-access-control', 'Manual - 01 Auth & Access Control', cases, {
+    loggedOutBlocked: true, authUserAllowed: true, protectedApiRejectsUnauth: true, staleSessionSafe: true,
+  });
 }
 
 function buildFtueResumeOnboardingPackage(ticket) {
-  const section = 'Manual - 08 Future Authenticated E2E';
-  const playwrightFile = `generated-qa/${ticket.key}/${ticket.key}-fixture-test.spec.js`;
-
   const cases = [
-    {
-      id: 'GAJ-FTUE-001',
-      title: 'First-time user enters setup mode',
-      priority: 'High',
-      type: 'Functional',
-      preconditions: 'User is new and has no canonical structured resume or completed onboarding resume.',
-      steps: steps('Open the resume experience as a first-time user.', 'Allow resume engine mode selection to run.', 'Observe the selected mode.'),
-      expected: 'User enters first-time setup mode instead of normal job-aware mode.',
-      automated: 'Yes',
-      notes: 'Core mode-selection rule for new users.',
-    },
-    {
-      id: 'GAJ-FTUE-002',
-      title: 'Returning user bypasses setup mode',
-      priority: 'High',
-      type: 'Regression',
-      preconditions: 'User has a canonical structured resume/profile and completed onboarding state.',
-      steps: steps('Open the resume experience as a returning user.', 'Allow resume engine mode selection to run.', 'Observe the selected mode.'),
-      expected: 'User bypasses setup mode and enters the normal job-aware path when applicable.',
-      automated: 'Yes',
-      notes: 'Prevents returning users from being trapped in onboarding.',
-    },
-    {
-      id: 'GAJ-FTUE-003',
-      title: 'Setup mode uses shared resume engine',
-      priority: 'High',
-      type: 'Architecture',
-      preconditions: 'First-time setup mode is available.',
-      steps: steps('Enter setup mode.', 'Inspect behavior/components used by setup mode.', 'Compare with normal resume engine behavior where practical.'),
-      expected: 'Setup mode is a mode/state of the shared resume engine, not a separate divergent resume system.',
-      automated: 'Future',
-      notes: 'Mostly architectural/manual until implementation exposes testable hooks.',
-    },
-    {
-      id: 'GAJ-FTUE-004',
-      title: 'Initial profile build does not charge credits',
-      priority: 'High',
-      type: 'Business Rule',
-      preconditions: 'First-time user is eligible for initial resume/profile setup.',
-      steps: steps('Start first-time resume/profile setup.', 'Complete initial setup actions.', 'Review credit balance and credit ledger.'),
-      expected: 'Initial profile setup is free and does not consume credits.',
-      automated: 'Yes',
-      notes: 'Critical monetization and trust check.',
-    },
-    {
-      id: 'GAJ-FTUE-005',
-      title: 'Completing setup persists canonical structured resume',
-      priority: 'High',
-      type: 'Data Integrity',
-      preconditions: 'First-time user has completed setup inputs or imported resume data.',
-      steps: steps('Complete guided resume setup.', 'Save/finish the setup flow.', 'Reload account/profile or query stored profile state.'),
-      expected: 'A canonical structured resume/profile snapshot is persisted and available for ATS/matching.',
-      automated: 'Yes',
-      notes: 'Core data persistence check.',
-    },
-    {
-      id: 'GAJ-FTUE-006',
-      title: 'User routes to Account/Profile after setup',
-      priority: 'Medium',
-      type: 'Navigation',
-      preconditions: 'First-time user completes setup.',
-      steps: steps('Finish first-time setup.', 'Observe the next route or CTA.', 'Open Account/Profile if routed there.'),
-      expected: 'User is routed or prompted toward Account/Profile for optional cleanup after setup.',
-      automated: 'Future',
-      notes: 'May depend on final UX routing decision.',
-    },
-    {
-      id: 'GAJ-FTUE-007',
-      title: 'User can continue into Jobs/Match after setup',
-      priority: 'Medium',
-      type: 'Navigation',
-      preconditions: 'User has completed setup and has a canonical structured resume/profile.',
-      steps: steps('Complete first-time setup.', 'Choose to continue into Jobs/Match or Apply Pack flow.', 'Observe whether the profile is available to the downstream flow.'),
-      expected: 'User can continue into Jobs/Match with the canonical profile available.',
-      automated: 'Future',
-      notes: 'Good later E2E candidate.',
-    },
-    {
-      id: 'GAJ-FTUE-008',
-      title: 'Job-aware mode uses canonical profile after onboarding',
-      priority: 'High',
-      type: 'Regression',
-      preconditions: 'User completed onboarding and has a canonical structured profile. Job/role context exists.',
-      steps: steps('Open a job-aware resume or matching flow.', 'Load or apply role/job context.', 'Observe the source profile used by the flow.'),
-      expected: 'Job-aware mode uses the canonical structured profile created during setup.',
-      automated: 'Yes',
-      notes: 'Connects FTUE output to later matching/ATS behavior.',
-    },
-    {
-      id: 'GAJ-FTUE-009',
-      title: 'Tutorial messaging explains base resume vs role tailoring',
-      priority: 'Medium',
-      type: 'Content',
-      preconditions: 'First-time user is in setup/tutorial flow.',
-      steps: steps('Open setup/tutorial messaging.', 'Read the explanation for base resume/profile setup.', 'Review any mention of tailoring per role later.'),
-      expected: 'Messaging clearly explains that the user builds a strong base resume once and tailors per role later.',
-      automated: 'Future',
-      notes: 'Manual content/UX review.',
-    },
-    {
-      id: 'GAJ-FTUE-010',
-      title: 'Incomplete onboarding resumes correctly',
-      priority: 'High',
-      type: 'Edge Case',
-      preconditions: 'User starts onboarding but does not complete setup.',
-      steps: steps('Begin first-time setup.', 'Exit or refresh before completion.', 'Return to the resume experience.'),
-      expected: 'User can resume setup without being incorrectly marked complete or losing entered/imported state.',
-      automated: 'Yes',
-      notes: 'Important state recovery case.',
-    },
+    makeCase('GAJ-FTUE-001', 'First-time user enters setup mode', 'High', 'Functional',
+      'User is new and has no canonical structured resume or completed onboarding resume.',
+      ['Open the resume experience as a first-time user.', 'Allow resume engine mode selection to run.', 'Observe the selected mode.'],
+      'User enters first-time setup mode instead of normal job-aware mode.', 'Yes', 'Core mode-selection rule for new users.', ['firstTimeUserEntersSetupMode']),
+    makeCase('GAJ-FTUE-002', 'Returning user bypasses setup mode', 'High', 'Regression',
+      'User has a canonical structured resume/profile and completed onboarding state.',
+      ['Open the resume experience as a returning user.', 'Allow resume engine mode selection to run.', 'Observe the selected mode.'],
+      'User bypasses setup mode and enters the normal job-aware path when applicable.', 'Yes', 'Prevents returning users from being trapped in onboarding.', ['returningUserBypassesSetupMode']),
+    makeCase('GAJ-FTUE-003', 'Setup mode uses shared resume engine', 'High', 'Architecture',
+      'First-time setup mode is available.', ['Enter setup mode.', 'Inspect behavior/components used by setup mode.', 'Compare with normal resume engine behavior where practical.'],
+      'Setup mode is a mode/state of the shared resume engine, not a separate divergent resume system.', 'Future', 'Mostly architectural/manual until implementation exposes testable hooks.', ['setupModeUsesSharedResumeEngine']),
+    makeCase('GAJ-FTUE-004', 'Initial profile build does not charge credits', 'High', 'Business Rule',
+      'First-time user is eligible for initial resume/profile setup.', ['Start first-time resume/profile setup.', 'Complete initial setup actions.', 'Review credit balance and credit ledger.'],
+      'Initial profile setup is free and does not consume credits.', 'Yes', 'Critical monetization and trust check.', ['initialSetupIsFree']),
+    makeCase('GAJ-FTUE-005', 'Completing setup persists canonical structured resume', 'High', 'Data Integrity',
+      'First-time user has completed setup inputs or imported resume data.', ['Complete guided resume setup.', 'Save/finish the setup flow.', 'Reload account/profile or query stored profile state.'],
+      'A canonical structured resume/profile snapshot is persisted and available for ATS/matching.', 'Yes', 'Core data persistence check.', ['completingSetupPersistsCanonicalProfile']),
+    makeCase('GAJ-FTUE-006', 'User routes to Account/Profile after setup', 'Medium', 'Navigation',
+      'First-time user completes setup.', ['Finish first-time setup.', 'Observe the next route or CTA.', 'Open Account/Profile if routed there.'],
+      'User is routed or prompted toward Account/Profile for optional cleanup after setup.', 'Future', 'May depend on final UX routing decision.', ['postSetupProfileRoute']),
+    makeCase('GAJ-FTUE-007', 'User can continue into Jobs/Match after setup', 'Medium', 'Navigation',
+      'User has completed setup and has a canonical structured resume/profile.', ['Complete first-time setup.', 'Choose to continue into Jobs/Match or Apply Pack flow.', 'Observe whether the profile is available to the downstream flow.'],
+      'User can continue into Jobs/Match with the canonical profile available.', 'Future', 'Good later E2E candidate.', ['jobsMatchUsesProfile']),
+    makeCase('GAJ-FTUE-008', 'Job-aware mode uses canonical profile after onboarding', 'High', 'Regression',
+      'User completed onboarding and has a canonical structured profile. Job/role context exists.', ['Open a job-aware resume or matching flow.', 'Load or apply role/job context.', 'Observe the source profile used by the flow.'],
+      'Job-aware mode uses the canonical structured profile created during setup.', 'Yes', 'Connects FTUE output to later matching/ATS behavior.', ['jobAwareModeUsesCanonicalProfile']),
+    makeCase('GAJ-FTUE-009', 'Tutorial messaging explains base resume vs role tailoring', 'Medium', 'Content',
+      'First-time user is in setup/tutorial flow.', ['Open setup/tutorial messaging.', 'Read the explanation for base resume/profile setup.', 'Review any mention of tailoring per role later.'],
+      'Messaging clearly explains that the user builds a strong base resume once and tailors per role later.', 'Future', 'Manual content/UX review.', ['tutorialMessagingClear']),
+    makeCase('GAJ-FTUE-010', 'Incomplete onboarding resumes correctly', 'High', 'Edge Case',
+      'User starts onboarding but does not complete setup.', ['Begin first-time setup.', 'Exit or refresh before completion.', 'Return to the resume experience.'],
+      'User can resume setup without being incorrectly marked complete or losing entered/imported state.', 'Yes', 'Important state recovery case.', ['incompleteOnboardingCanResume']),
   ];
+  return makePackage(ticket, 'ftue-resume-onboarding', 'Manual - 08 Future Authenticated E2E', cases, {
+    firstTimeUserEntersSetupMode: true, returningUserBypassesSetupMode: true,
+    setupModeUsesSharedResumeEngine: true, initialSetupIsFree: true,
+    completingSetupPersistsCanonicalProfile: true, jobAwareModeUsesCanonicalProfile: true,
+    incompleteOnboardingCanResume: true, postSetupProfileRoute: true, jobsMatchUsesProfile: true,
+    tutorialMessagingClear: true,
+  });
+}
 
-  const fixtures = {
-    issueKey: ticket.key,
-    feature: 'ftue-resume-onboarding',
-    modeRules: {
-      firstTimeUserEntersSetupMode: true,
-      returningUserBypassesSetupMode: true,
-      setupModeUsesSharedResumeEngine: true,
-      initialSetupIsFree: true,
-      completingSetupPersistsCanonicalProfile: true,
-      jobAwareModeRequiresCanonicalProfile: true,
-      incompleteOnboardingCanResume: true,
-    },
-    modes: ['first-time setup mode', 'normal job-aware mode'],
-    cases: [
-      {
-        id: 'GAJ-FTUE-001',
-        scenario: 'first-time user mode selection',
-        userState: {
-          isNewUser: true,
-          hasCanonicalStructuredResume: false,
-          hasCompletedOnboardingResume: false,
-          hasJobContext: false,
-        },
-        expectedMode: 'first-time setup mode',
-      },
-      {
-        id: 'GAJ-FTUE-002',
-        scenario: 'returning user mode selection',
-        userState: {
-          isNewUser: false,
-          hasCanonicalStructuredResume: true,
-          hasCompletedOnboardingResume: true,
-          hasJobContext: false,
-        },
-        expectedMode: 'normal job-aware mode',
-      },
-      {
-        id: 'GAJ-FTUE-004',
-        scenario: 'initial setup is free',
-        action: 'complete_initial_profile_setup',
-        expectedCreditDelta: 0,
-        shouldConsumeCredits: false,
-      },
-      {
-        id: 'GAJ-FTUE-005',
-        scenario: 'completion persists canonical profile',
-        action: 'complete_setup',
-        expectedState: {
-          hasCanonicalStructuredResume: true,
-          hasCompletedOnboardingResume: true,
-        },
-      },
-      {
-        id: 'GAJ-FTUE-010',
-        scenario: 'incomplete onboarding resumes correctly',
-        userState: {
-          startedOnboarding: true,
-          completedOnboarding: false,
-        },
-        expectedMode: 'first-time setup mode',
-        expectedDataLoss: false,
-      },
-    ],
-  };
+function buildJobSearchPackage(ticket) {
+  const cases = [
+    makeCase('GAJ-JOBS-001', 'Canonical profile is required before matching', 'High', 'Business Rule',
+      'User has no canonical profile.', ['Open Jobs/Match flow.', 'Attempt to start matching/apply flow.', 'Observe routing or validation.'],
+      'User is guided to create or complete a canonical profile before matching.', 'Future', 'Keeps matching grounded in user profile data.', ['canonicalProfileRequired']),
+    makeCase('GAJ-JOBS-002', 'Job context is applied correctly', 'High', 'Functional',
+      'User has canonical profile and selected job/role context.', ['Select or open job context.', 'Run matching/analysis.', 'Review displayed job context in results.'],
+      'The selected job context is used consistently for scoring/matching.', 'Future', 'Prevents stale/wrong job context.', ['jobContextApplied']),
+    makeCase('GAJ-JOBS-003', 'Role-specific tailoring avoids false claims', 'High', 'AI Safety',
+      'User profile and job description exist.', ['Generate role-specific suggestions/apply pack.', 'Review claims against canonical profile.', 'Look for unsupported experience.'],
+      'Tailored output aligns to the role without inventing candidate experience.', 'Future', 'Bridges job matching and AI safety.', ['noFalseClaims']),
+    makeCase('GAJ-JOBS-004', 'Saved job state persists for returning user', 'Medium', 'Regression',
+      'User saves or interacts with a job.', ['Save/select job.', 'Leave and return to Jobs/Match.', 'Review saved state.'],
+      'Saved job or match state is retained for the user.', 'Future', 'State persistence check.', ['savedJobPersists']),
+  ];
+  return makePackage(ticket, 'job-search-match-apply', 'Manual - 08 Future Authenticated E2E', cases, {
+    canonicalProfileRequired: true, jobContextApplied: true, noFalseClaims: true, savedJobPersists: true,
+  });
+}
 
-  return { cases, testrailRows: buildRows(ticket, cases, section, playwrightFile), fixtures };
+function buildUiSmokePackage(ticket) {
+  const cases = [
+    makeCase('GAJ-UI-001', 'Page loads without critical error', 'High', 'Smoke',
+      'Target environment is available.', ['Open the target page.', 'Wait for page load.', 'Check for major visible error states.'],
+      'Page loads successfully without a critical error.', 'Future', 'Basic smoke check.', ['pageLoads']),
+    makeCase('GAJ-UI-002', 'Primary CTA is visible and actionable', 'Medium', 'UI',
+      'Target page is loaded.', ['Locate primary CTA.', 'Click or inspect destination.', 'Verify expected navigation/action.'],
+      'Primary CTA is visible and leads to the expected flow.', 'Future', 'Conversion/navigation check.', ['ctaWorks']),
+    makeCase('GAJ-UI-003', 'Header/navigation links do not break primary flow', 'Medium', 'Regression',
+      'Header/nav is visible.', ['Click primary nav links.', 'Observe route changes.', 'Confirm no broken or blank pages.'],
+      'Navigation works without broken pages or dead ends.', 'Future', 'Useful broad smoke check.', ['navSafe']),
+  ];
+  return makePackage(ticket, 'ui-navigation-smoke', 'Manual - 00 Public Smoke', cases, {
+    pageLoads: true, ctaWorks: true, navSafe: true,
+  });
+}
+
+function buildAccessibilityPackage(ticket) {
+  const cases = [
+    makeCase('GAJ-A11Y-001', 'Keyboard navigation reaches primary controls', 'Medium', 'Accessibility',
+      'Target page is loaded.', ['Use keyboard Tab/Shift+Tab only.', 'Navigate through primary controls.', 'Confirm controls can be reached.'],
+      'Primary controls are reachable by keyboard.', 'Future', 'Manual/semiautomated accessibility check.', ['keyboardReachable']),
+    makeCase('GAJ-A11Y-002', 'Form inputs have useful labels or accessible names', 'Medium', 'Accessibility',
+      'Target form is visible.', ['Inspect form inputs.', 'Check labels/placeholders/accessibility tree where practical.', 'Submit invalid form to view errors.'],
+      'Inputs have clear labels/accessibility names and errors are understandable.', 'Future', 'Important for resume upload/forms.', ['formsLabeled']),
+    makeCase('GAJ-A11Y-003', 'Visible focus states are present', 'Low', 'Accessibility',
+      'Interactive controls exist.', ['Navigate with keyboard.', 'Observe focus indicator.', 'Check important buttons/links.'],
+      'Focused controls have visible focus states.', 'Future', 'Manual visual check.', ['visibleFocus']),
+  ];
+  return makePackage(ticket, 'accessibility-usability', 'Manual - 07 Release Readiness', cases, {
+    keyboardReachable: true, formsLabeled: true, visibleFocus: true,
+  });
+}
+
+function buildAdminDonationPackage(ticket) {
+  const cases = [
+    makeCase('GAJ-ADMIN-001', 'Non-admin user is blocked from admin route', 'High', 'Security',
+      'User is authenticated but not admin.', ['Navigate to admin/donation route.', 'Observe response.', 'Check for private admin data exposure.'],
+      'Non-admin user is blocked or redirected safely.', 'Future', 'Admin access gate.', ['nonAdminBlocked']),
+    makeCase('GAJ-ADMIN-002', 'Admin can view donation pool state', 'Medium', 'Functional',
+      'Admin user is authenticated.', ['Open admin donation pool view.', 'Review visible pool state.', 'Compare against expected ledger/pool data.'],
+      'Admin can view accurate donation pool information.', 'Future', 'Admin visibility check.', ['adminCanViewPool']),
+    makeCase('GAJ-ADMIN-003', 'Fulfillment updates request and ledger consistently', 'High', 'Data Integrity',
+      'Pending donation/credit request exists.', ['Fulfill request as admin.', 'Review request status.', 'Review credit ledger/pool changes.'],
+      'Fulfillment updates request status and ledger/pool records consistently.', 'Future', 'Important admin accounting flow.', ['fulfillmentConsistent']),
+  ];
+  return makePackage(ticket, 'admin-donation-pool', 'Manual - 07 Release Readiness', cases, {
+    nonAdminBlocked: true, adminCanViewPool: true, fulfillmentConsistent: true,
+  });
 }
 
 function buildGenericPackage(ticket) {
-  const section = 'Manual - Generated QA';
-  const playwrightFile = 'Not created yet';
   const safeNumber = ticket.key.replace(/[^0-9]/g, '') || 'GEN';
-
-  const cases = [
-    {
-      id: `GAJ-${safeNumber}-001`,
-      title: 'Happy path works as expected',
-      priority: 'High',
-      type: 'Functional',
-      preconditions: 'Feature is available in the test environment.',
-      steps: steps('Open the feature area.', 'Perform the primary user action.', 'Review the result.'),
-      expected: 'The feature completes successfully and shows the expected result.',
-      automated: 'Future',
-      notes: 'Generated generic case. Human review required.',
-    },
-  ];
-
-  const fixtures = {
-    issueKey: ticket.key,
-    feature: 'generic-feature',
-    note: 'Generic fixture scaffold. Human review required before automation.',
-    cases,
-  };
-
-  return { cases, testrailRows: buildRows(ticket, cases, section, playwrightFile), fixtures };
+  const cases = [makeCase(`GAJ-${safeNumber}-001`, 'Happy path works as expected', 'High', 'Functional',
+    'Feature is available in the test environment.', ['Open the feature area.', 'Perform the primary user action.', 'Review the result.'],
+    'The feature completes successfully and shows the expected result.', 'Future', 'Generated generic case. Human review required.', ['humanReviewRequired'])];
+  return makePackage(ticket, 'generic-feature', 'Manual - Generated QA', cases, { humanReviewRequired: true });
 }
 
 function buildFixtureTest(ticket, feature) {
-  const dailyValidation = feature === 'daily-login-bonus' ? `
-  test('${ticket.key}-FIXTURE-003 - daily bonus rules are safe when applicable', async () => {
-    const data = readFixture();
-
-    expect(data.creditPolicy.bonusAmount).toBe(10);
-    expect(data.creditPolicy.reason).toBe('daily_login_bonus');
-    expect(data.creditPolicy.maxAwardsPerUserPerBonusDate).toBe(1);
-    expect(data.creditPolicy.paidCreditEligible).toBe(false);
-  });
-` : '';
-
-  const ftueValidation = feature === 'ftue-resume-onboarding' ? `
-  test('${ticket.key}-FIXTURE-003 - FTUE mode rules are represented', async () => {
-    const data = readFixture();
-
-    expect(data.feature).toBe('ftue-resume-onboarding');
-    expect(data.modeRules.firstTimeUserEntersSetupMode).toBe(true);
-    expect(data.modeRules.returningUserBypassesSetupMode).toBe(true);
-    expect(data.modeRules.setupModeUsesSharedResumeEngine).toBe(true);
-    expect(data.modeRules.initialSetupIsFree).toBe(true);
-    expect(data.modeRules.completingSetupPersistsCanonicalProfile).toBe(true);
-    expect(data.modes).toContain('first-time setup mode');
-    expect(data.modes).toContain('normal job-aware mode');
-  });
-
-  test('${ticket.key}-FIXTURE-004 - FTUE cases include setup and job-aware outcomes', async () => {
-    const data = readFixture();
-
-    const expectedModes = data.cases.map((testCase) => testCase.expectedMode).filter(Boolean);
-    const freeSetupCase = data.cases.find((testCase) => testCase.id === 'GAJ-FTUE-004');
-
-    expect(expectedModes).toContain('first-time setup mode');
-    expect(expectedModes).toContain('normal job-aware mode');
-    expect(freeSetupCase.shouldConsumeCredits).toBe(false);
-    expect(freeSetupCase.expectedCreditDelta).toBe(0);
-  });
-` : '';
-
   return `const { test, expect } = require('@playwright/test');
 const fs = require('fs');
 const path = require('path');
@@ -532,20 +496,32 @@ test.describe('${ticket.key} generated QA fixture validation', () => {
     const data = readFixture();
 
     expect(data.issueKey).toBe('${ticket.key}');
-    expect(data.feature).toBeTruthy();
+    expect(data.feature).toBe('${feature}');
+    expect(data.rules).toBeTruthy();
     expect(Array.isArray(data.cases)).toBeTruthy();
     expect(data.cases.length).toBeGreaterThan(0);
   });
 
-  test('${ticket.key}-FIXTURE-002 - generated cases have IDs and expected outcomes', async () => {
+  test('${ticket.key}-FIXTURE-002 - generated cases have stable IDs and expected outcomes', async () => {
     const data = readFixture();
 
     for (const testCase of data.cases) {
-      expect(testCase.id).toBeTruthy();
-      expect(testCase.scenario || testCase.title).toBeTruthy();
+      expect(testCase.id).toMatch(/^GAJ-/);
+      expect(testCase.title).toBeTruthy();
+      expect(testCase.expected).toBeTruthy();
     }
   });
-${dailyValidation}${ftueValidation}
+
+  test('${ticket.key}-FIXTURE-003 - generated rule references exist in fixture rules', async () => {
+    const data = readFixture();
+    const availableRules = new Set(Object.keys(data.rules || {}));
+
+    for (const testCase of data.cases) {
+      for (const ruleRef of testCase.ruleRefs || []) {
+        expect(availableRules.has(ruleRef)).toBeTruthy();
+      }
+    }
+  });
 });
 `;
 }
@@ -559,15 +535,22 @@ const ticket = {
 
 const feature = detectFeature(ticket.summary, raw);
 
-let packageData;
+const packageBuilders = {
+  'daily-login-bonus': buildDailyLoginBonusPackage,
+  'ftue-resume-onboarding': buildFtueResumeOnboardingPackage,
+  'resume-parser-import': buildResumeParserPackage,
+  'ai-analysis-safety': buildAiSafetyPackage,
+  'credit-ledger-billing': buildCreditLedgerPackage,
+  'stripe-webhooks': buildStripeWebhookPackage,
+  'auth-access-control': buildAuthAccessPackage,
+  'job-search-match-apply': buildJobSearchPackage,
+  'ui-navigation-smoke': buildUiSmokePackage,
+  'accessibility-usability': buildAccessibilityPackage,
+  'admin-donation-pool': buildAdminDonationPackage,
+  'generic-feature': buildGenericPackage,
+};
 
-if (feature === 'daily-login-bonus') {
-  packageData = buildDailyLoginBonusPackage(ticket);
-} else if (feature === 'ftue-resume-onboarding') {
-  packageData = buildFtueResumeOnboardingPackage(ticket);
-} else {
-  packageData = buildGenericPackage(ticket);
-}
+const packageData = (packageBuilders[feature] || buildGenericPackage)(ticket);
 
 const testrailCsvPath = path.join(outputDir, `${ticket.key}-testrail-cases.csv`);
 const fixturesPath = path.join(outputDir, `${ticket.key}-fixtures.json`);
@@ -587,7 +570,7 @@ ${ticket.summary}
 
 ## Source
 
-This QA package was generated from pasted Jira ticket text.
+This QA package was generated from pasted/fetched Jira ticket text.
 
 ## Feature Type
 
@@ -633,6 +616,12 @@ Generated QA package:
 - ${fixturesPath}
 - ${fixtureTestPath}
 
+Feature type:
+- ${feature}
+
+Generated case count:
+- ${packageData.cases.length}
+
 Recommended validation:
 - Review generated test cases before importing to TestRail.
 - Import CSV into TestRail if approved.
@@ -640,13 +629,14 @@ Recommended validation:
 - Promote fixture test to main test suite only when stable.
 
 Notes:
-Generated by scripts/generate-qa-package.js from pasted Jira input.
+Generated by scripts/generate-qa-package.js from Jira input.
 `;
 
 fs.writeFileSync(evidencePath, evidence, 'utf8');
 
 console.log(`Generated QA package for ${ticket.key}`);
 console.log(`Feature type: ${feature}`);
+console.log(`Case count: ${packageData.cases.length}`);
 console.log(`Output folder: ${outputDir}`);
 console.log('');
 console.log('Created:');

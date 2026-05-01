@@ -1,0 +1,52 @@
+{
+  "issueKey": "JOB-65",
+  "feature": "job-search-match-apply",
+  "rules": {
+    "canonicalProfileRequired": true,
+    "jobContextApplied": true,
+    "noFalseClaims": true,
+    "savedJobPersists": true
+  },
+  "cases": [
+    {
+      "id": "GAJ-JOBS-001",
+      "title": "Canonical profile is required before matching",
+      "priority": "High",
+      "type": "Business Rule",
+      "expected": "User is guided to create or complete a canonical profile before matching.",
+      "ruleRefs": [
+        "canonicalProfileRequired"
+      ]
+    },
+    {
+      "id": "GAJ-JOBS-002",
+      "title": "Job context is applied correctly",
+      "priority": "High",
+      "type": "Functional",
+      "expected": "The selected job context is used consistently for scoring/matching.",
+      "ruleRefs": [
+        "jobContextApplied"
+      ]
+    },
+    {
+      "id": "GAJ-JOBS-003",
+      "title": "Role-specific tailoring avoids false claims",
+      "priority": "High",
+      "type": "AI Safety",
+      "expected": "Tailored output aligns to the role without inventing candidate experience.",
+      "ruleRefs": [
+        "noFalseClaims"
+      ]
+    },
+    {
+      "id": "GAJ-JOBS-004",
+      "title": "Saved job state persists for returning user",
+      "priority": "Medium",
+      "type": "Regression",
+      "expected": "Saved job or match state is retained for the user.",
+      "ruleRefs": [
+        "savedJobPersists"
+      ]
+    }
+  ]
+}

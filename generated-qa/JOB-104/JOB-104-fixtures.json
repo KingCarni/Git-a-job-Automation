@@ -1,0 +1,63 @@
+{
+  "issueKey": "JOB-104",
+  "feature": "stripe-webhooks",
+  "rules": {
+    "checkoutAwardsCredits": true,
+    "stripeEventIdempotency": true,
+    "signatureRequired": true,
+    "unknownEventsSafe": true,
+    "dbFailureSafe": true
+  },
+  "cases": [
+    {
+      "id": "GAJ-STRIPE-001",
+      "title": "Checkout completed event awards purchased credits",
+      "priority": "High",
+      "type": "Integration",
+      "expected": "Purchased credits are awarded once with a purchase_stripe ledger reason/ref.",
+      "ruleRefs": [
+        "checkoutAwardsCredits"
+      ]
+    },
+    {
+      "id": "GAJ-STRIPE-002",
+      "title": "Duplicate Stripe event does not double-award credits",
+      "priority": "High",
+      "type": "Regression",
+      "expected": "Duplicate event is ignored/idempotent and credits are not double-awarded.",
+      "ruleRefs": [
+        "stripeEventIdempotency"
+      ]
+    },
+    {
+      "id": "GAJ-STRIPE-003",
+      "title": "Invalid signature is rejected",
+      "priority": "High",
+      "type": "Security",
+      "expected": "Webhook is rejected and no credits are awarded.",
+      "ruleRefs": [
+        "signatureRequired"
+      ]
+    },
+    {
+      "id": "GAJ-STRIPE-004",
+      "title": "Unknown event type is handled safely",
+      "priority": "Medium",
+      "type": "Negative",
+      "expected": "Event is safely ignored or acknowledged without creating credits.",
+      "ruleRefs": [
+        "unknownEventsSafe"
+      ]
+    },
+    {
+      "id": "GAJ-STRIPE-005",
+      "title": "Database failure does not mark credit award successful",
+      "priority": "High",
+      "type": "Data Integrity",
+      "expected": "Failure does not create false success state and can be retried safely.",
+      "ruleRefs": [
+        "dbFailureSafe"
+      ]
+    }
+  ]
+}

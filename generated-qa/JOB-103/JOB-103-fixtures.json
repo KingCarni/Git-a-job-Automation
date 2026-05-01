@@ -1,0 +1,118 @@
+{
+  "issueKey": "JOB-103",
+  "feature": "ftue-resume-onboarding",
+  "rules": {
+    "firstTimeUserEntersSetupMode": true,
+    "returningUserBypassesSetupMode": true,
+    "setupModeUsesSharedResumeEngine": true,
+    "initialSetupIsFree": true,
+    "completingSetupPersistsCanonicalProfile": true,
+    "jobAwareModeUsesCanonicalProfile": true,
+    "incompleteOnboardingCanResume": true,
+    "postSetupProfileRoute": true,
+    "jobsMatchUsesProfile": true,
+    "tutorialMessagingClear": true
+  },
+  "cases": [
+    {
+      "id": "GAJ-FTUE-001",
+      "title": "First-time user enters setup mode",
+      "priority": "High",
+      "type": "Functional",
+      "expected": "User enters first-time setup mode instead of normal job-aware mode.",
+      "ruleRefs": [
+        "firstTimeUserEntersSetupMode"
+      ]
+    },
+    {
+      "id": "GAJ-FTUE-002",
+      "title": "Returning user bypasses setup mode",
+      "priority": "High",
+      "type": "Regression",
+      "expected": "User bypasses setup mode and enters the normal job-aware path when applicable.",
+      "ruleRefs": [
+        "returningUserBypassesSetupMode"
+      ]
+    },
+    {
+      "id": "GAJ-FTUE-003",
+      "title": "Setup mode uses shared resume engine",
+      "priority": "High",
+      "type": "Architecture",
+      "expected": "Setup mode is a mode/state of the shared resume engine, not a separate divergent resume system.",
+      "ruleRefs": [
+        "setupModeUsesSharedResumeEngine"
+      ]
+    },
+    {
+      "id": "GAJ-FTUE-004",
+      "title": "Initial profile build does not charge credits",
+      "priority": "High",
+      "type": "Business Rule",
+      "expected": "Initial profile setup is free and does not consume credits.",
+      "ruleRefs": [
+        "initialSetupIsFree"
+      ]
+    },
+    {
+      "id": "GAJ-FTUE-005",
+      "title": "Completing setup persists canonical structured resume",
+      "priority": "High",
+      "type": "Data Integrity",
+      "expected": "A canonical structured resume/profile snapshot is persisted and available for ATS/matching.",
+      "ruleRefs": [
+        "completingSetupPersistsCanonicalProfile"
+      ]
+    },
+    {
+      "id": "GAJ-FTUE-006",
+      "title": "User routes to Account/Profile after setup",
+      "priority": "Medium",
+      "type": "Navigation",
+      "expected": "User is routed or prompted toward Account/Profile for optional cleanup after setup.",
+      "ruleRefs": [
+        "postSetupProfileRoute"
+      ]
+    },
+    {
+      "id": "GAJ-FTUE-007",
+      "title": "User can continue into Jobs/Match after setup",
+      "priority": "Medium",
+      "type": "Navigation",
+      "expected": "User can continue into Jobs/Match with the canonical profile available.",
+      "ruleRefs": [
+        "jobsMatchUsesProfile"
+      ]
+    },
+    {
+      "id": "GAJ-FTUE-008",
+      "title": "Job-aware mode uses canonical profile after onboarding",
+      "priority": "High",
+      "type": "Regression",
+      "expected": "Job-aware mode uses the canonical structured profile created during setup.",
+      "ruleRefs": [
+        "jobAwareModeUsesCanonicalProfile"
+      ]
+    },
+    {
+      "id": "GAJ-FTUE-009",
+      "title": "Tutorial messaging explains base resume vs role tailoring",
+      "priority": "Medium",
+      "type": "Content",
+      "expected": "Messaging clearly explains that the user builds a strong base resume once and tailors per role later.",
+      "ruleRefs": [
+        "tutorialMessagingClear"
+      ]
+    },
+    {
+      "id": "GAJ-FTUE-010",
+      "title": "Incomplete onboarding resumes correctly",
+      "priority": "High",
+      "type": "Edge Case",
+      "expected": "User can resume setup without being incorrectly marked complete or losing entered/imported state.",
+      "ruleRefs": [
+        "incompleteOnboardingCanResume"
+      ]
+    }
+  ]
+}

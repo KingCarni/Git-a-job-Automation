@@ -11,9 +11,11 @@
   "test:local": "playwright test local",
   "test:all": "playwright test",
   "test:headed": "playwright test --headed",
+  "fetch:jira": "node scripts/fetch-jira-ticket.js",
   "report": "playwright show-report",
   "generate:qa": "node scripts/generate-qa-package.js",
-  "import:testrail-csv": "node scripts/import-testrail-csv.js"
+  "import:testrail-csv": "node scripts/import-testrail-csv.js",
+  "fetch:jira": "node scripts/fetch-jira-ticket.js"
 },
   "keywords": [],
   "author": "",

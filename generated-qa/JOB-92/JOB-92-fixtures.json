@@ -1,0 +1,77 @@
+{
+  "issueKey": "JOB-92",
+  "feature": "resume-parser-import",
+  "rules": {
+    "validPdfSupported": true,
+    "validDocxSupported": true,
+    "unsupportedRejectedSafely": true,
+    "corruptRejectedSafely": true,
+    "structuredOutputRequired": true,
+    "sectionIntegrityRequired": true,
+    "fakeDataOnly": true
+  },
+  "cases": [
+    {
+      "id": "GAJ-PARSER-IMP-001",
+      "title": "PDF resume imports without parser crash",
+      "priority": "High",
+      "type": "Functional",
+      "expected": "The PDF imports without crashing and produces usable structured resume data.",
+      "ruleRefs": [
+        "validPdfSupported",
+        "structuredOutputRequired"
+      ]
+    },
+    {
+      "id": "GAJ-PARSER-IMP-002",
+      "title": "DOCX resume imports without parser crash",
+      "priority": "High",
+      "type": "Functional",
+      "expected": "The DOCX imports without crashing and produces usable structured resume data.",
+      "ruleRefs": [
+        "validDocxSupported",
+        "structuredOutputRequired"
+      ]
+    },
+    {
+      "id": "GAJ-PARSER-IMP-003",
+      "title": "Unsupported file type is rejected safely",
+      "priority": "High",
+      "type": "Negative",
+      "expected": "The app shows a safe error and does not save corrupted resume data.",
+      "ruleRefs": [
+        "unsupportedRejectedSafely"
+      ]
+    },
+    {
+      "id": "GAJ-PARSER-IMP-004",
+      "title": "Corrupt resume file fails gracefully",
+      "priority": "High",
+      "type": "Negative",
+      "expected": "The parser fails gracefully with no crash and no partial/corrupt profile save.",
+      "ruleRefs": [
+        "corruptRejectedSafely"
+      ]
+    },
+    {
+      "id": "GAJ-PARSER-IMP-005",
+      "title": "Two-column resume layout preserves major sections",
+      "priority": "Medium",
+      "type": "Regression",
+      "expected": "Major sections such as experience, education, skills, and contact details are not mixed or lost.",
+      "ruleRefs": [
+        "sectionIntegrityRequired"
+      ]
+    },
+    {
+      "id": "GAJ-PARSER-IMP-006",
+      "title": "Parsed resume data remains fake/anonymized in fixtures",
+      "priority": "Medium",
+      "type": "Data Integrity",
+      "expected": "Fixtures use fake/anonymized content only.",
+      "ruleRefs": [
+        "fakeDataOnly"
+      ]
+    }
+  ]
+}

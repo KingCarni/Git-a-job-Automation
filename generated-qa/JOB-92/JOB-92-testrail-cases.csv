@@ -1,0 +1,19 @@
+Section,Title,Type,Priority,Estimate,References,Preconditions,Steps,Expected Result,Is Automated,Automation Type,Automation ID,Playwright File,Playwright Command,Notes
+Manual - 03 Resume Parser Fixtures,GAJ-PARSER-IMP-001 - PDF resume imports without parser crash,Functional,High,5m,JOB-92,A valid fake/anonymized PDF resume fixture is available.,"1. Upload/import a valid PDF resume.
+2. Run parsing/import flow.
+3. Review extracted resume state.",The PDF imports without crashing and produces usable structured resume data.,Yes,Playwright Fixture,GAJ-PARSER-IMP-001,generated-qa/JOB-92/JOB-92-fixture-test.spec.js,npx playwright test generated-qa/JOB-92/JOB-92-fixture-test.spec.js,Core parser/import happy path.
+Manual - 03 Resume Parser Fixtures,GAJ-PARSER-IMP-002 - DOCX resume imports without parser crash,Functional,High,5m,JOB-92,A valid fake/anonymized DOCX resume fixture is available.,"1. Upload/import a valid DOCX resume.
+2. Run parsing/import flow.
+3. Review extracted resume state.",The DOCX imports without crashing and produces usable structured resume data.,Yes,Playwright Fixture,GAJ-PARSER-IMP-002,generated-qa/JOB-92/JOB-92-fixture-test.spec.js,npx playwright test generated-qa/JOB-92/JOB-92-fixture-test.spec.js,Core DOCX import check.
+Manual - 03 Resume Parser Fixtures,GAJ-PARSER-IMP-003 - Unsupported file type is rejected safely,Negative,High,5m,JOB-92,Unsupported test file is available.,"1. Attempt to upload unsupported file type.
+2. Observe user-facing error.
+3. Check that no corrupted resume state is saved.",The app shows a safe error and does not save corrupted resume data.,Yes,Playwright Fixture,GAJ-PARSER-IMP-003,generated-qa/JOB-92/JOB-92-fixture-test.spec.js,npx playwright test generated-qa/JOB-92/JOB-92-fixture-test.spec.js,Prevents bad parser state.
+Manual - 03 Resume Parser Fixtures,GAJ-PARSER-IMP-004 - Corrupt resume file fails gracefully,Negative,High,5m,JOB-92,Corrupt PDF/DOCX fixture is available.,"1. Upload corrupt resume fixture.
+2. Run import/parser flow.
+3. Observe error handling.",The parser fails gracefully with no crash and no partial/corrupt profile save.,Yes,Playwright Fixture,GAJ-PARSER-IMP-004,generated-qa/JOB-92/JOB-92-fixture-test.spec.js,npx playwright test generated-qa/JOB-92/JOB-92-fixture-test.spec.js,Protects import reliability.
+Manual - 03 Resume Parser Fixtures,GAJ-PARSER-IMP-005 - Two-column resume layout preserves major sections,Regression,Medium,3m,JOB-92,Two-column fake resume fixture is available.,"1. Import two-column resume.
+2. Review parsed sections.
+3. Compare against expected output.","Major sections such as experience, education, skills, and contact details are not mixed or lost.",Future,Future Automation,GAJ-PARSER-IMP-005,generated-qa/JOB-92/JOB-92-fixture-test.spec.js,Not automated yet,Parser layout complexity check.
+Manual - 03 Resume Parser Fixtures,GAJ-PARSER-IMP-006 - Parsed resume data remains fake/anonymized in fixtures,Data Integrity,Medium,3m,JOB-92,Fixture corpus is available.,"1. Review fixture input/output files.
+2. Scan for non-fake emails or personal identifiers.
+3. Confirm fixture data policy.",Fixtures use fake/anonymized content only.,Yes,Playwright Fixture,GAJ-PARSER-IMP-006,generated-qa/JOB-92/JOB-92-fixture-test.spec.js,npx playwright test generated-qa/JOB-92/JOB-92-fixture-test.spec.js,Prevents accidental real personal data in repo.

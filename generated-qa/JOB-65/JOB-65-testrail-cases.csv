@@ -1,0 +1,13 @@
+Section,Title,Type,Priority,Estimate,References,Preconditions,Steps,Expected Result,Is Automated,Automation Type,Automation ID,Playwright File,Playwright Command,Notes
+Manual - 08 Future Authenticated E2E,GAJ-JOBS-001 - Canonical profile is required before matching,Business Rule,High,5m,JOB-65,User has no canonical profile.,"1. Open Jobs/Match flow.
+2. Attempt to start matching/apply flow.
+3. Observe routing or validation.",User is guided to create or complete a canonical profile before matching.,Future,Future Automation,GAJ-JOBS-001,generated-qa/JOB-65/JOB-65-fixture-test.spec.js,Not automated yet,Keeps matching grounded in user profile data.
+Manual - 08 Future Authenticated E2E,GAJ-JOBS-002 - Job context is applied correctly,Functional,High,5m,JOB-65,User has canonical profile and selected job/role context.,"1. Select or open job context.
+2. Run matching/analysis.
+3. Review displayed job context in results.",The selected job context is used consistently for scoring/matching.,Future,Future Automation,GAJ-JOBS-002,generated-qa/JOB-65/JOB-65-fixture-test.spec.js,Not automated yet,Prevents stale/wrong job context.
+Manual - 08 Future Authenticated E2E,GAJ-JOBS-003 - Role-specific tailoring avoids false claims,AI Safety,High,5m,JOB-65,User profile and job description exist.,"1. Generate role-specific suggestions/apply pack.
+2. Review claims against canonical profile.
+3. Look for unsupported experience.",Tailored output aligns to the role without inventing candidate experience.,Future,Future Automation,GAJ-JOBS-003,generated-qa/JOB-65/JOB-65-fixture-test.spec.js,Not automated yet,Bridges job matching and AI safety.
+Manual - 08 Future Authenticated E2E,GAJ-JOBS-004 - Saved job state persists for returning user,Regression,Medium,3m,JOB-65,User saves or interacts with a job.,"1. Save/select job.
+2. Leave and return to Jobs/Match.
+3. Review saved state.",Saved job or match state is retained for the user.,Future,Future Automation,GAJ-JOBS-004,generated-qa/JOB-65/JOB-65-fixture-test.spec.js,Not automated yet,State persistence check.
