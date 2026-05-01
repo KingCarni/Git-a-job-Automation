@@ -1,0 +1,61 @@
+{
+  "issueKey": "JOB-56",
+  "feature": "daily-login-bonus",
+  "creditPolicy": {
+    "bonusAmount": 10,
+    "reason": "daily_login_bonus",
+    "refPattern": "daily_login_bonus:{userId}:{YYYY-MM-DD}",
+    "paidCreditEligible": false,
+    "maxAwardsPerUserPerBonusDate": 1
+  },
+  "cases": [
+    {
+      "id": "GAJ-CREDIT-DAILY-003",
+      "scenario": "ledger entry shape",
+      "expectedLedgerEntry": {
+        "userId": "qa-user-a",
+        "delta": 10,
+        "reason": "daily_login_bonus",
+        "ref": "daily_login_bonus:qa-user-a:2026-04-30",
+        "paidCreditEligible": false
+      }
+    },
+    {
+      "id": "GAJ-CREDIT-DAILY-002",
+      "scenario": "same user same day cannot duplicate",
+      "startingLedger": [
+        {
+          "userId": "qa-user-a",
+          "delta": 10,
+          "reason": "daily_login_bonus",
+          "ref": "daily_login_bonus:qa-user-a:2026-04-30",
+          "paidCreditEligible": false
+        }
+      ],
+      "action": {
+        "userId": "qa-user-a",
+        "type": "daily_login_bonus",
+        "bonusDate": "2026-04-30"
+      },
+      "expectedNewEntries": 0,
+      "expectedFinalBalance": 10
+    },
+    {
+      "id": "GAJ-CREDIT-DAILY-004",
+      "scenario": "different users can each receive bonus",
+      "expectedLedgerEntry": {
+        "userId": "qa-user-b",
+        "delta": 10,
+        "reason": "daily_login_bonus",
+        "ref": "daily_login_bonus:qa-user-b:2026-04-30",
+        "paidCreditEligible": false
+      }
+    },
+    {
+      "id": "GAJ-CREDIT-DAILY-007",
+      "scenario": "daily bonus credits are not paid credits",
+      "expectedPaidCreditEligibleBalance": 0,
+      "expectedTotalBalance": 10
+    }
+  ]
+}

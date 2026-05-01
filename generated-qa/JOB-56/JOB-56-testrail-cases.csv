@@ -1,0 +1,25 @@
+Section,Title,Type,Priority,Estimate,References,Preconditions,Steps,Expected Result,Is Automated,Automation Type,Automation ID,Playwright File,Playwright Command,Notes
+Manual - 05 Credit Ledger,GAJ-CREDIT-DAILY-001 - First eligible sign-in grants 10 credits,Functional,High,5m,JOB-56,User account exists. User has not received the daily login bonus for the selected bonus date.,"1. Sign in as an eligible user.
+2. Allow the daily bonus award logic to run.
+3. Review the user credit balance and ledger entries.",User receives exactly +10 credits and one daily_login_bonus ledger entry is created.,Future,Future Automation,GAJ-CREDIT-DAILY-001,generated-qa/JOB-56/JOB-56-fixture-test.spec.js,Not automated yet,Core happy path for daily bonus behavior.
+Manual - 05 Credit Ledger,GAJ-CREDIT-DAILY-002 - Repeated same-day sign-in does not grant duplicate bonus,Regression,High,5m,JOB-56,User has already received a daily_login_bonus entry for the selected bonus date.,"1. Sign out if needed.
+2. Sign in again as the same user on the same bonus date.
+3. Review the user credit balance and ledger entries.",No second +10 daily_login_bonus entry is created for the same user/date.,Future,Future Automation,GAJ-CREDIT-DAILY-002,generated-qa/JOB-56/JOB-56-fixture-test.spec.js,Not automated yet,Important idempotency check.
+Manual - 05 Credit Ledger,GAJ-CREDIT-DAILY-003 - Daily bonus ledger entry uses correct reason and ref,Data Integrity,High,5m,JOB-56,Eligible user can receive daily login bonus.,"1. Trigger daily bonus award.
+2. Inspect the resulting ledger entry.
+3. Verify ledger reason and ref format.","Ledger entry uses delta +10, reason daily_login_bonus, and a unique ref for user/date.",Yes,Playwright Fixture,GAJ-CREDIT-DAILY-003,generated-qa/JOB-56/JOB-56-fixture-test.spec.js,npx playwright test generated-qa/JOB-56/JOB-56-fixture-test.spec.js,Can be checked in fixture-level automation before DB integration exists.
+Manual - 05 Credit Ledger,GAJ-CREDIT-DAILY-004 - Daily bonus is isolated per user,Data Integrity,High,5m,JOB-56,Two different users exist and neither has received the daily bonus for the selected date.,"1. Sign in as User A and trigger daily bonus.
+2. Sign in as User B and trigger daily bonus.
+3. Review both users credit ledgers.",Each user can receive their own +10 bonus. User A actions do not affect User B balance.,Yes,Playwright Fixture,GAJ-CREDIT-DAILY-004,generated-qa/JOB-56/JOB-56-fixture-test.spec.js,npx playwright test generated-qa/JOB-56/JOB-56-fixture-test.spec.js,User isolation check.
+Manual - 05 Credit Ledger,GAJ-CREDIT-DAILY-005 - Near-midnight sign-in does not double-award incorrectly,Edge Case,Medium,3m,JOB-56,Test environment can control or simulate bonus dates/timestamps.,"1. Trigger sign-in near the daily cutoff boundary.
+2. Trigger another sign-in around the boundary.
+3. Review ledger entries by bonus date.",Bonus is awarded according to the intended date rule and does not duplicate unexpectedly.,Future,Future Automation,GAJ-CREDIT-DAILY-005,generated-qa/JOB-56/JOB-56-fixture-test.spec.js,Not automated yet,Requires clear timezone/date policy.
+Manual - 05 Credit Ledger,GAJ-CREDIT-DAILY-006 - Concurrent sign-ins do not create duplicate bonus entries,Regression,High,5m,JOB-56,Eligible user exists. Test can simulate rapid or concurrent login requests.,"1. Trigger two sign-in/bonus attempts for the same user/date close together.
+2. Review resulting ledger entries.
+3. Review final credit balance.",Only one +10 daily_login_bonus entry exists for the same user/date.,Future,Future Automation,GAJ-CREDIT-DAILY-006,generated-qa/JOB-56/JOB-56-fixture-test.spec.js,Not automated yet,Race-condition/idempotency check.
+Manual - 05 Credit Ledger,GAJ-CREDIT-DAILY-007 - Bonus credits are not treated as paid or donatable credits,Business Rule,High,5m,JOB-56,User has only daily_login_bonus credits and no purchased credits.,"1. Award daily login bonus.
+2. Attempt a paid-credit-only action such as donation if applicable.
+3. Review eligibility calculation.",Daily bonus credits are treated as free credits and do not count as paid/donatable credits.,Yes,Playwright Fixture,GAJ-CREDIT-DAILY-007,generated-qa/JOB-56/JOB-56-fixture-test.spec.js,npx playwright test generated-qa/JOB-56/JOB-56-fixture-test.spec.js,Important because donation logic distinguishes paid credits from free credits.
+Manual - 05 Credit Ledger,GAJ-CREDIT-DAILY-008 - UI credit count updates after daily bonus award,UI,Medium,3m,JOB-56,Eligible user exists and can sign in through the UI.,"1. Sign in as an eligible user.
+2. Observe the header/account credit count.
+3. Refresh or navigate if needed.",Displayed credit count reflects the +10 daily bonus after the award is granted.,Future,Future Automation,GAJ-CREDIT-DAILY-008,generated-qa/JOB-56/JOB-56-fixture-test.spec.js,Not automated yet,UI/E2E check after auth test harness exists.

@@ -10,7 +10,8 @@
   "test:local": "playwright test local",
   "test:all": "playwright test",
   "test:headed": "playwright test --headed",
-  "report": "playwright show-report"
+  "report": "playwright show-report",
+  "generate:qa": "node scripts/generate-qa-package.js"
 },
   "keywords": [],
   "author": "",
