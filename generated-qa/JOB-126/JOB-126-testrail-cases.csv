@@ -1,0 +1,4 @@
+Section,Title,Type,Priority,Estimate,References,Preconditions,Steps,Expected Result,Is Automated,Automation Type,Automation ID,Playwright File,Playwright Command,Notes
+Manual - Generated QA,GAJ-126-001 - Happy path works as expected,Functional,High,5m,JOB-126,Feature is available in the test environment.,"1. Open the feature area.
+2. Perform the primary user action.
+3. Review the result.",The feature completes successfully and shows the expected result.,Future,Future Automation,GAJ-126-001,Not created yet,Not automated yet,Generated generic case. Human review required.

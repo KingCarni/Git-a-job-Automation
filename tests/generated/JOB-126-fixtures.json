@@ -1,0 +1,18 @@
+{
+  "issueKey": "JOB-126",
+  "feature": "generic-feature",
+  "note": "Generic fixture scaffold. Human review required before automation.",
+  "cases": [
+    {
+      "id": "GAJ-126-001",
+      "title": "Happy path works as expected",
+      "priority": "High",
+      "type": "Functional",
+      "preconditions": "Feature is available in the test environment.",
+      "steps": "1. Open the feature area.\n2. Perform the primary user action.\n3. Review the result.",
+      "expected": "The feature completes successfully and shows the expected result.",
+      "automated": "Future",
+      "notes": "Generated generic case. Human review required."
+    }
+  ]
+}
